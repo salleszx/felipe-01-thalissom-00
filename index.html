@@ -1,0 +1,1167 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#13201A">
+<title>Felipe 1 × 0 Thalissom</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+body{margin:0}
+/* Layout: one mobile column — a stadium scoreboard on top, a zigzag "campeonato" path of matches, bottom nav. */
+:root{
+  --bg:#EEF5EC; --surface:#FFFFFF; --surface2:#F5FAF3; --ink:#18261C; --muted:#647468; --line:#D6E3D4;
+  --grass:#2BA24C; --grass-d:#1C7A36; --sky:#2C86E8; --sky-d:#1C63B3; --coin:#FFC12E; --coin-d:#D69500;
+  --red:#EE4F4C; --red-d:#B93330; --purple:#8A5CF0; --purple-d:#6438C4; --orange:#F2872A; --orange-d:#C3650F;
+  --board:#13201A; --board2:#1C2E24; --led:#FFD84A; --led2:#FF6A5C; --code-bg:#122019; --code-ink:#E4F2E6;
+  --ok-bg:#DDF6E1; --ok-ink:#17692F; --bad-bg:#FDE1DF; --bad-ink:#A12825; --lock:#C9D3C8; --lock-d:#A8B4A7;
+  --f-display:"Baloo 2", "Nunito", system-ui, sans-serif; --f-body:"Nunito", system-ui, -apple-system, sans-serif; --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E1611; --surface:#17221B; --surface2:#1C2920; --ink:#E7F1E9; --muted:#93A598; --line:#2A3A2F;
+  --grass:#37BA5A; --grass-d:#228040; --sky:#4198F2; --sky-d:#2468B8; --coin:#FFC844; --coin-d:#C98C00;
+  --red:#F2615E; --red-d:#B53735; --purple:#9B73F5; --purple-d:#6A41C9; --orange:#F5953F; --orange-d:#B9600F;
+  --board:#0A120D; --board2:#132019; --code-bg:#0A140E; --code-ink:#E4F2E6;
+  --ok-bg:#163A20; --ok-ink:#8EE6A4; --bad-bg:#3E1A19; --bad-ink:#FFA9A6; --lock:#2E3B32; --lock-d:#222D25; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0E1611; --surface:#17221B; --surface2:#1C2920; --ink:#E7F1E9; --muted:#93A598; --line:#2A3A2F;
+  --grass:#37BA5A; --grass-d:#228040; --sky:#4198F2; --sky-d:#2468B8; --coin:#FFC844; --coin-d:#C98C00;
+  --red:#F2615E; --red-d:#B53735; --purple:#9B73F5; --purple-d:#6A41C9; --orange:#F5953F; --orange-d:#B9600F;
+  --board:#0A120D; --board2:#132019; --code-bg:#0A140E; --code-ink:#E4F2E6;
+  --ok-bg:#163A20; --ok-ink:#8EE6A4; --bad-bg:#3E1A19; --bad-ink:#FFA9A6; --lock:#2E3B32; --lock-d:#222D25; color-scheme:dark }
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--surface2);border:1px solid var(--line);padding:0 .35em;border-radius:6px;white-space:nowrap}
+h1,h2,h3{font-family:var(--f-display);line-height:1.1;margin:0;text-wrap:balance}
+
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--board)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--board);color:#fff;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top-in{max-width:620px;margin:0 auto;display:flex;align-items:center;gap:10px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-weight:700;letter-spacing:.04em;font-size:13px;min-width:0}
+.brand .nm{text-transform:uppercase;white-space:nowrap}
+.digit{display:inline-grid;place-items:center;min-width:26px;height:30px;border-radius:6px;background:#000;color:var(--led);font-size:20px;box-shadow:inset 0 0 0 1px #2c3b31, 0 0 12px rgba(255,216,74,.25);text-shadow:0 0 8px rgba(255,216,74,.7)}
+.digit.r{color:var(--led2);text-shadow:0 0 8px rgba(255,106,92,.6);box-shadow:inset 0 0 0 1px #2c3b31,0 0 12px rgba(255,106,92,.2)}
+.x{color:#7d9183}
+.stats{display:flex;gap:8px;flex-shrink:0}
+.chip{display:flex;align-items:center;gap:4px;font-weight:900;font-size:14px;padding:4px 9px;border-radius:999px;background:var(--board2)}
+.chip svg{width:18px;height:18px}
+@media (max-width:430px){ .brand .nm.l{display:none} .brand{font-size:12px} .chip{padding:4px 7px} }
+
+main{max-width:620px;margin:0 auto;padding-block:16px 120px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* hero */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;background:var(--surface);border:2px solid var(--line);border-radius:22px;padding:14px 16px;margin-bottom:22px}
+.hero .av{width:92px;height:92px}
+.hero h2{font-size:22px}
+.hero p{margin:2px 0 8px;color:var(--muted);font-size:14px}
+.meter{position:relative;height:16px;border-radius:999px;background:var(--surface2);border:2px solid var(--line);overflow:hidden}
+.meter i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--red),var(--coin) 50%,var(--grass));border-radius:999px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.meter-l{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
+.nota{font-family:var(--f-display);font-size:28px;font-weight:800;color:var(--grass);line-height:1}
+
+/* path */
+.unit{margin:28px 0 8px;border-radius:20px;padding:14px 16px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 5px 0 var(--ud)}
+.unit small{display:block;font-weight:900;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.unit h3{font-size:22px}
+.unit p{margin:2px 0 0;font-size:13.5px;opacity:.92}
+.unit .ub{flex-shrink:0;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.35);border-radius:14px;padding:6px 10px;font-weight:900;font-size:13px}
+.unit.locked{filter:saturate(.25) brightness(.9)}
+.nodes{position:relative;display:flex;flex-direction:column;align-items:center;gap:18px;padding:18px 0 4px}
+.nrow{position:relative;width:100%;display:flex;justify-content:center}
+.node{position:relative;width:76px;height:70px;border-radius:50%;background:var(--nc);box-shadow:0 7px 0 var(--nd);display:grid;place-items:center;transition:transform .12s}
+.node:active{transform:translateY(5px);box-shadow:0 2px 0 var(--nd)}
+.node svg{width:36px;height:36px}
+.node.locked{--nc:var(--lock);--nd:var(--lock-d);cursor:not-allowed}
+.node.locked svg{opacity:.55}
+.node.cur::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:4px solid var(--nc);opacity:.45;animation:ring 1.8s ease-out infinite}
+.node .stars{position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);display:flex;gap:1px}
+.node .stars svg{width:16px;height:16px}
+.nlabel{position:absolute;top:-24px;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:900;font-size:12px;color:var(--nc);background:var(--surface);border:2px solid var(--line);padding:1px 8px;border-radius:999px;pointer-events:none}
+.walker{position:absolute;top:-12px;width:78px;height:78px;pointer-events:none}
+.walker .av{width:78px;height:78px}
+
+/* bottom nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:2px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.nav-in{max-width:620px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-block:8px}
+.nav button{display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:900;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:6px;border-radius:14px;border:2px solid transparent}
+.nav button svg{width:28px;height:28px}
+.nav button.on{color:var(--sky);background:color-mix(in srgb,var(--sky) 12%,transparent);border-color:color-mix(in srgb,var(--sky) 45%,transparent)}
+
+/* generic 3D buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;font-size:15px;padding:13px 20px;border-radius:16px;background:var(--b,var(--grass));color:#fff;box-shadow:0 5px 0 var(--bd,var(--grass-d));transition:transform .08s,box-shadow .08s,filter .15s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--bd,var(--grass-d))}
+.btn:disabled{--b:var(--lock);--bd:var(--lock-d);color:var(--muted);cursor:not-allowed}
+.btn.ghost{--b:var(--surface);--bd:var(--line);color:var(--sky);border:2px solid var(--line)}
+.btn.blue{--b:var(--sky);--bd:var(--sky-d)}
+.btn.red{--b:var(--red);--bd:var(--red-d)}
+.btn.gold{--b:var(--coin);--bd:var(--coin-d);color:#3b2a00}
+.btn.wide{width:100%}
+
+/* overlay screens */
+.screen{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.scr-head{padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.scr-head-in{max-width:620px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.close{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--muted);flex-shrink:0}
+.close svg{width:24px;height:24px}
+.prog{flex:1;height:16px;border-radius:999px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--grass);border-radius:999px;transition:width .4s cubic-bezier(.2,.8,.2,1);box-shadow:inset 0 -4px 0 rgba(0,0,0,.12), inset 0 4px 0 rgba(255,255,255,.25)}
+.scr-body{flex:1;overflow-y:auto;padding-block:8px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.scr-body-in{max-width:620px;margin:0 auto}
+.scr-foot{border-top:2px solid var(--line);background:var(--surface);padding-block:14px calc(14px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));transition:background .2s}
+.scr-foot-in{max-width:620px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.scr-foot.ok{background:var(--ok-bg);border-color:transparent}
+.scr-foot.bad{background:var(--bad-bg);border-color:transparent}
+.fb-title{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:22px}
+.scr-foot.ok .fb-title{color:var(--ok-ink)} .scr-foot.bad .fb-title{color:var(--bad-ink)}
+.fb-title .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--surface)}
+.fb-title .ic svg{width:22px;height:22px}
+.fb-exp{font-size:14.5px;margin:-4px 0 0}
+.scr-foot.ok .fb-exp{color:var(--ok-ink)} .scr-foot.bad .fb-exp{color:var(--bad-ink)}
+.scr-foot.ok .btn{--b:var(--grass);--bd:var(--grass-d)}
+.scr-foot.bad .btn{--b:var(--red);--bd:var(--red-d)}
+
+/* mini scoreboard in lesson */
+.mini{display:flex;align-items:center;gap:6px;background:var(--board);border-radius:12px;padding:5px 8px;font-family:var(--f-mono);font-weight:700;color:#fff;font-size:11px;letter-spacing:.05em;flex-shrink:0}
+.mini .digit{min-width:22px;height:26px;font-size:17px}
+.mini .tn{text-transform:uppercase}
+@media (max-width:430px){ .mini .tn{display:none} }
+.flash-g{animation:flashg .9s ease}
+.flash-r{animation:flashr .9s ease}
+
+/* question */
+.qtag{font-weight:900;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--purple);margin:6px 0 6px}
+.qrow{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:end;margin-bottom:14px}
+.qrow .av{width:84px;height:84px}
+.bubble{position:relative;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 14px;font-weight:800;font-size:17px;line-height:1.4;min-width:0}
+.bubble::before{content:"";position:absolute;left:-10px;bottom:18px;width:16px;height:16px;background:var(--surface);border-left:2px solid var(--line);border-bottom:2px solid var(--line);transform:rotate(45deg)}
+pre.code{margin:0 0 14px;background:var(--code-bg);color:var(--code-ink);border-radius:16px;padding:14px 16px;font-family:var(--f-mono);font-size:13.5px;line-height:1.6;overflow-x:auto;border:2px solid color-mix(in srgb,var(--code-ink) 10%,transparent)}
+.k{color:#FF8FB1}.s{color:#FFD27A}.n{color:#8FD3FF}.c{color:#7E9886;font-style:italic}.p{color:#C9A6FF}
+.blank{display:inline-block;min-width:3ch;border-bottom:3px solid var(--led);color:var(--led);text-align:center;animation:pulse 1.4s ease-in-out infinite}
+.opts{display:grid;gap:10px}
+.opts.two{grid-template-columns:1fr 1fr}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:0 4px 0 var(--line);font-weight:800;font-size:15.5px;transition:transform .08s, box-shadow .08s, border-color .15s, background .15s;min-width:0}
+.opt:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.opt .kbd{flex-shrink:0;width:28px;height:28px;border-radius:9px;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;color:var(--muted)}
+.opt span.t{min-width:0;overflow-wrap:anywhere}
+.opt.sel{border-color:var(--sky);background:color-mix(in srgb,var(--sky) 10%,var(--surface));box-shadow:0 4px 0 var(--sky)}
+.opt.sel .kbd{border-color:var(--sky);color:var(--sky)}
+.opt.right{border-color:var(--grass);background:var(--ok-bg);box-shadow:0 4px 0 var(--grass)}
+.opt.wrong{border-color:var(--red);background:var(--bad-bg);box-shadow:0 4px 0 var(--red)}
+.opt:disabled{cursor:default}
+.opt.tf{justify-content:center;font-size:18px;padding:18px 10px}
+.opt code{white-space:pre-wrap}
+.typein{width:100%;font-family:var(--f-mono);font-size:18px;font-weight:700;padding:14px 16px;border-radius:16px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+.typein:focus{border-color:var(--sky);outline:none}
+.typein.right{border-color:var(--grass);background:var(--ok-bg)} .typein.wrong{border-color:var(--red);background:var(--bad-bg)}
+.hint{font-size:13px;color:var(--muted);margin-top:8px}
+.ansline{min-height:64px;border-bottom:2px solid var(--line);border-top:2px solid var(--line);padding:10px 0;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;margin-bottom:18px}
+.ansline.lines,.bank.lines{flex-direction:column;align-items:stretch}
+.bank{display:flex;flex-wrap:wrap;gap:8px}
+.tok{font-family:var(--f-mono);font-weight:700;font-size:14.5px;background:var(--surface);border:2px solid var(--line);box-shadow:0 3px 0 var(--line);border-radius:12px;padding:8px 12px;transition:transform .08s;text-align:left}
+.tok:active{transform:translateY(2px)}
+.tok.used{visibility:hidden}
+.tok.lns{white-space:pre}
+.combo{position:fixed;left:50%;top:22%;transform:translateX(-50%);z-index:60;font-family:var(--f-display);font-weight:800;font-size:34px;color:var(--coin);text-shadow:0 3px 0 var(--coin-d),0 0 30px rgba(255,193,46,.5);pointer-events:none;white-space:nowrap;animation:pop 1.3s ease forwards}
+.combo.r{color:var(--red);text-shadow:0 3px 0 var(--red-d)}
+.floatcoin{position:fixed;z-index:60;font-weight:900;color:var(--coin-d);pointer-events:none;animation:floatup 1s ease forwards;font-size:18px}
+
+/* learn slides */
+.slide h2{font-size:28px;margin:6px 0 10px}
+.slide p,.slide li{font-size:16px}
+.slide ul{padding-left:20px;margin:8px 0}
+.note{border-radius:14px;padding:10px 14px;background:color-mix(in srgb,var(--coin) 18%,var(--surface));border:2px solid color-mix(in srgb,var(--coin) 55%,transparent);font-size:14.5px;margin:12px 0}
+.note b{color:var(--coin-d)}
+.dots{display:flex;gap:6px;justify-content:center;margin:6px 0 2px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--sky);width:22px;border-radius:9px}
+.mem{overflow-x:auto;margin:10px 0 14px;padding-bottom:4px}
+.mem-row{display:flex;gap:6px;width:max-content;align-items:flex-end}
+.cell{display:flex;flex-direction:column;align-items:center;gap:3px;font-family:var(--f-mono)}
+.cell .ad{font-size:11px;color:var(--muted)}
+.cell .bx{min-width:58px;height:46px;display:grid;place-items:center;border-radius:10px;background:var(--surface);border:2px solid var(--line);box-shadow:0 3px 0 var(--line);font-weight:700;font-size:15px;padding:0 6px}
+.cell .ix{font-size:12px;color:var(--purple);font-weight:700}
+.cell.hl .bx{border-color:var(--sky);background:color-mix(in srgb,var(--sky) 14%,var(--surface));box-shadow:0 3px 0 var(--sky)}
+.cell.pt .bx{border-color:var(--orange);background:color-mix(in srgb,var(--orange) 14%,var(--surface));box-shadow:0 3px 0 var(--orange)}
+.cell .lb{font-size:12px;font-weight:700;color:var(--ink)}
+.gap{width:22px;align-self:center;color:var(--muted);text-align:center;font-weight:700}
+.grid-m{display:inline-grid;gap:6px;margin:8px 0 14px}
+.anat{font-family:var(--f-mono);font-size:15px;line-height:2.2;overflow-x:auto;white-space:nowrap;margin:8px 0 14px}
+.anat span{padding:3px 6px;border-radius:8px;position:relative}
+.a1{background:color-mix(in srgb,var(--sky) 20%,transparent)}.a2{background:color-mix(in srgb,var(--grass) 22%,transparent)}.a3{background:color-mix(in srgb,var(--orange) 22%,transparent)}.a4{background:color-mix(in srgb,var(--purple) 22%,transparent)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:13px;font-weight:800}
+.legend span{display:flex;align-items:center;gap:6px}.legend i{width:14px;height:14px;border-radius:4px}
+.fields{border:2px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden;max-width:340px;margin:10px 0 14px}
+.fields .fh{background:var(--orange);color:#fff;font-weight:900;padding:6px 12px;font-family:var(--f-mono)}
+.fields .fr{display:grid;grid-template-columns:70px 1fr 1fr;gap:8px;padding:7px 12px;border-top:2px solid var(--line);font-family:var(--f-mono);font-size:13.5px}
+.fields .fr b{color:var(--purple)}
+.stack{display:flex;flex-direction:column;gap:5px;margin:8px 0 14px;font-family:var(--f-mono);font-size:13.5px}
+.stack div{padding:6px 10px;border-radius:10px;background:color-mix(in srgb,var(--purple) calc(10% + var(--d)*6%),var(--surface));border:2px solid color-mix(in srgb,var(--purple) 35%,transparent);margin-left:calc(var(--d)*14px);width:max-content;max-width:calc(100% - var(--d)*14px)}
+
+/* results */
+.res{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding-top:10px}
+.res .av{width:150px;height:150px}
+.res h2{font-size:32px}
+.bigboard{background:var(--board);border-radius:20px;padding:14px 18px;display:flex;align-items:center;gap:14px;color:#fff;font-family:var(--f-mono);font-weight:700;box-shadow:0 6px 0 #000}
+.bigboard .digit{min-width:46px;height:56px;font-size:38px;border-radius:10px}
+.bigboard .tn{font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.bigboard .side{display:flex;flex-direction:column;align-items:center;gap:6px}
+.rstars{display:flex;gap:6px}
+.rstars svg{width:44px;height:44px}
+.rstars svg.on{animation:starpop .5s cubic-bezier(.2,1.6,.4,1) both}
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.rbox{border:2px solid var(--line);border-radius:16px;padding:10px 6px;background:var(--surface)}
+.rbox b{display:block;font-family:var(--f-display);font-size:24px;line-height:1.1}
+.rbox small{font-weight:900;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* shop */
+.sec-h{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:4px 0 14px}
+.sec-h h2{font-size:28px}
+.sec-h p{margin:0;color:var(--muted);font-size:14px}
+.wallet{display:flex;align-items:center;gap:6px;font-weight:900;font-size:20px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:6px 14px;flex-shrink:0}
+.wallet svg{width:24px;height:24px}
+.shop{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:12px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px}
+.card.eq{border-color:var(--grass);box-shadow:0 0 0 3px color-mix(in srgb,var(--grass) 25%,transparent)}
+.card .av{width:104px;height:104px}
+.card h3{font-size:19px}
+.card p{margin:0;font-size:12.5px;color:var(--muted);min-height:3.2em}
+.card .btn{width:100%;font-size:13px;padding:10px 8px}
+.price{display:inline-flex;align-items:center;gap:4px}
+.price svg{width:18px;height:18px}
+
+/* resumo */
+details.rs{background:var(--surface);border:2px solid var(--line);border-radius:18px;margin-bottom:12px;overflow:hidden}
+details.rs summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:12px;font-family:var(--f-display);font-weight:800;font-size:19px}
+details.rs summary::-webkit-details-marker{display:none}
+details.rs summary .sw{width:14px;height:34px;border-radius:6px;flex-shrink:0}
+details.rs summary .chev{margin-left:auto;transition:transform .2s;color:var(--muted)}
+details.rs[open] summary .chev{transform:rotate(180deg)}
+.rs-in{padding:0 16px 16px;min-width:0}
+.rs-in .slide{border-top:2px dashed var(--line);padding-top:12px;margin-top:12px}
+.rs-in .slide h2{font-size:20px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:70;background:var(--board);color:#fff;font-weight:800;padding:10px 18px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.25);animation:toast 2.4s ease forwards;max-width:calc(100% - 32px);text-align:center}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:80;width:100%;height:100%}
+
+/* characters */
+.av{display:block;overflow:visible}
+.av .bodyg{transform-origin:60px 110px;animation:bob 2.6s ease-in-out infinite}
+.av .eyes{transform-origin:60px 58px;animation:blink 4.2s infinite}
+.av.happy .bodyg{animation:jump .7s cubic-bezier(.3,1.6,.5,1) 2}
+.av.sad .bodyg{animation:shake .5s ease 1}
+.av.party .bodyg{animation:jump .8s cubic-bezier(.3,1.6,.5,1) infinite}
+.av.dim{filter:grayscale(1) brightness(.85);opacity:.55}
+
+@keyframes bob{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-3px) scale(1.01,.99)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes jump{0%,100%{transform:translateY(0) scale(1)}30%{transform:translateY(-16px) scale(.96,1.06)}60%{transform:translateY(0) scale(1.08,.92)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px) rotate(-4deg)}40%{transform:translateX(6px) rotate(3deg)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes ring{0%{transform:scale(.9);opacity:.6}100%{transform:scale(1.25);opacity:0}}
+@keyframes pulse{50%{opacity:.45}}
+@keyframes pop{0%{transform:translate(-50%,10px) scale(.5);opacity:0}20%{transform:translate(-50%,0) scale(1.15);opacity:1}35%{transform:translate(-50%,0) scale(1)}80%{opacity:1}100%{transform:translate(-50%,-30px) scale(1);opacity:0}}
+@keyframes floatup{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-50px);opacity:0}}
+@keyframes flashg{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 4px var(--led),0 0 24px var(--led)}}
+@keyframes flashr{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 4px var(--led2),0 0 24px var(--led2)}}
+@keyframes starpop{0%{transform:scale(0) rotate(-40deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,10px)}12%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+@keyframes slidein{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+.enter{animation:slidein .3s ease both}
+@media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important} }
+</style>
+
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="brand" aria-label="Felipe 1 × 0 Thalissom">
+    <span class="nm">Felipe</span><span class="digit">1</span><span class="x">×</span><span class="digit r">0</span><span class="nm">Thalissom</span>
+  </div>
+  <div class="stats">
+    <span class="chip" title="Dias seguidos"><svg viewBox="0 0 24 24"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 0 2 1 3 2 3 0-3-1-5 1-8z" fill="#FF8A2B"/><path d="M12 12c.5 2 3 3 3 5.5a3 3 0 0 1-6 0c0-1.5 1-2.5 1.5-3.5.2 1 .7 1.5 1.2 1.5 0-1.5-.5-2.5.3-3.5z" fill="#FFD24A"/></svg><span id="stStreak">0</span></span>
+    <span class="chip" title="Moedas"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#D69500"/><circle cx="12" cy="11" r="9" fill="#FFC12E"/><text x="12" y="15" text-anchor="middle" font-size="10" font-weight="900" fill="#8A5A00" font-family="monospace">C</text></svg><span id="stCoins">0</span></span>
+    <button class="chip" id="sndBtn" title="Som" aria-label="Ligar ou desligar som"></button>
+  </div>
+</div></header>
+
+<main id="main"></main>
+
+<nav class="nav"><div class="nav-in">
+  <button data-tab="trilha" class="on"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="12"/><path d="M16 9l5 3.6-1.9 5.9h-6.2L11 12.6z"/><path d="M16 4v5M21 12.6l6-2M19.1 18.5l3.6 5.5M12.9 18.5l-3.6 5.5M11 12.6l-6-2"/></svg>Trilha</button>
+  <button data-tab="resumo"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h9a3 3 0 0 1 3 3v17a2 2 0 0 0-2-2H5zM27 6h-9a3 3 0 0 0-3 3v17a2 2 0 0 1 2-2h10z"/></svg>Resumo</button>
+  <button data-tab="loja"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h22l-2 14H7z"/><path d="M11 12V9a5 5 0 0 1 10 0v3"/></svg>Loja</button>
+</div></nav>
+
+<canvas id="fx"></canvas>
+
+<script>
+"use strict";
+const C = String.raw;
+
+/* =================== CONTEÚDO =================== */
+function mem(cells, extra=""){
+  return `<div class="mem"><div class="mem-row">${cells.map(c=> c==="…"?`<div class="gap">…</div>`:
+   `<div class="cell ${c.cls||""}"><span class="ad">${c.a??""}</span><span class="bx">${c.v}</span><span class="${c.lb?'lb':'ix'}">${c.lb||c.i||"&nbsp;"}</span></div>`).join("")}</div>${extra}</div>`;
+}
+function gridM(rows, hl){ return `<div class="grid-m" style="grid-template-columns:repeat(${rows[0].length},auto)">${rows.flatMap((r,i)=>r.map((v,j)=>`<div class="cell ${hl&&hl[0]===i&&hl[1]===j?'hl':''}"><span class="bx">${v}</span><span class="ix">[${i}][${j}]</span></div>`)).join("")}</div>`; }
+
+const UNITS = [
+{ id:"vet", title:"Vetores", sub:"Fileiras de caixinhas do mesmo tipo", color:"--grass",
+  slides:[
+   {h:"Vetor = fileira de caixinhas", p:"Um <b>vetor</b> (array) guarda <b>vários valores do mesmo tipo</b> em posições <b>contínuas</b> na memória. Notas de alunos, temperaturas da semana, preços…", code:C`int notas[5] = {7, 9, 5, 10, 8};`,
+    html: mem([{a:"1000",v:"7",i:"[0]"},{a:"1004",v:"9",i:"[1]"},{a:"1008",v:"5",i:"[2]"},{a:"1012",v:"10",i:"[3]"},{a:"1016",v:"8",i:"[4]",cls:"hl"}]),
+    note:"<b>Índices começam em 0.</b> Num vetor de 5 posições, o último é o <code>[4]</code>."},
+   {h:"Percorrer com for", p:"O <code>for</code> anda pelos índices de 0 até tamanho − 1. Para ler com <code>scanf</code>, passe o endereço com <code>&</code>.", code:C`int numeros[5];
+for (int i = 0; i < 5; i++) {
+    printf("Digite um numero %d: ", i + 1);
+    scanf("%d", &numeros[i]);
+}`},
+   {h:"Maior e menor", p:"Comece com o <b>primeiro elemento</b> do vetor, nunca com 0. Se todos fossem negativos, o 0 daria resposta errada.", code:C`maior = menor = numeros[0];
+for (int i = 0; i < 5; i++) {
+    if (numeros[i] > maior) maior = numeros[i];
+    if (numeros[i] < menor) menor = numeros[i];
+}`},
+   {h:"Quantos elementos? sizeof", p:"<code>sizeof</code> devolve o tamanho em <b>bytes</b>. Dividindo o total pelo tamanho de um elemento, você descobre quantos elementos existem.", code:C`int codigos[] = {101, 102, 103, 104};
+int n = sizeof(codigos) / sizeof(codigos[0]); // 16 / 4 = 4`,
+    note:"<b>Cuidados:</b> tamanho definido antes do uso · índices de 0 a n−1 · acessar fora do limite causa erro · todos do mesmo tipo."}
+  ],
+  qs:[
+   {t:"mc", q:"Em `int v[5];`, qual é o índice do **último** elemento?", opts:["4","5","0","6"], exp:"Os índices vão de 0 até tamanho − 1. Com 5 elementos: 0, 1, 2, 3, 4."},
+   {t:"mc", q:"O que é impresso?", code:C`int v[] = {3, 8, 1, 9};
+printf("%d", v[2]);`, opts:["1","8","9","3"], exp:"v[0]=3, v[1]=8, v[2]=1. O índice 2 é o terceiro elemento."},
+   {t:"tf", q:"Um mesmo vetor pode guardar um `int` e um `float` misturados.", a:false, exp:"Todos os elementos de um vetor são do mesmo tipo. Para juntar tipos diferentes, use uma struct."},
+   {t:"type", q:"Digite o que o programa imprime:", code:C`int v[4] = {2, 4, 6, 8};
+int s = 0;
+for (int i = 0; i < 4; i++) {
+    s += v[i];
+}
+printf("%d", s);`, a:"20", exp:"2 + 4 + 6 + 8 = 20."},
+   {t:"mc", q:"Qual o valor de `n`?", code:C`int codigos[] = {101, 102, 103, 104};
+int n = sizeof(codigos) / sizeof(codigos[0]);`, opts:["4","16","104","1"], exp:"sizeof(codigos) = 16 bytes (4 ints × 4 bytes). sizeof(codigos[0]) = 4. 16 / 4 = 4 elementos."},
+   {t:"mc", q:"Por que iniciar com `maior = menor = numeros[0];` em vez de `= 0`?", opts:["Se todos forem negativos, o 0 viraria o “maior” sem estar no vetor","Porque 0 não é um int válido","Porque o compilador exige","Para economizar memória"], exp:"Ex.: {-5, -2, -9}. Com maior = 0, o resultado seria 0. Começando no 1º elemento, a resposta é sempre um valor real do vetor."},
+   {t:"mc", q:"O que acontece aqui?", code:C`int v[3];
+v[3] = 10;`, opts:["Acesso fora do limite: erro / comportamento indefinido","v[3] vira o último elemento válido","O vetor cresce para 4 posições","Nada, está correto"], exp:"v[3] só tem índices 0, 1 e 2. Escrever em v[3] invade memória que não pertence ao vetor."},
+   {t:"order", q:"Monte o `for` que percorre um vetor de 5 posições:", ans:["for (","int i = 0;","i < 5;","i++",")"], extra:["i <= 5;","int i = 1;"], exp:"Começa em 0 e vai enquanto i < 5 (0 a 4). Com i <= 5 você acessaria v[5], fora do limite."},
+   {t:"fill", q:"Complete para ler o elemento `i` do vetor:", code:C`scanf("%d", ___numeros[i]);`, opts:["&","*","#","(nada)"], exp:"scanf precisa do endereço da variável. Para um int: &numeros[i]."},
+   {t:"type", q:"Qual valor é impresso?", code:C`int v[5] = {5, 1, 7, 3, 2};
+int m = v[0];
+for (int i = 1; i < 5; i++) {
+    if (v[i] > m) m = v[i];
+}
+printf("%d", m);`, a:"7", exp:"O laço guarda o maior valor visto: 5 → 7. Nenhum outro passa de 7."},
+   {t:"mc", q:"Num sistema acadêmico, qual uso combina com **vetor**?", opts:["Guardar as notas de vários alunos e achar média, maior e menor","Guardar nome, matrícula e nota de UM aluno juntos","Desenhar a tela do sistema","Substituir as funções"], exp:"Vetor = vários valores do mesmo tipo (ex.: notas). Dados diferentes de um mesmo aluno é trabalho de struct."}
+  ]},
+
+{ id:"mat", title:"Matrizes", sub:"Tabelas com linha e coluna", color:"--sky",
+  slides:[
+   {h:"Matriz = tabela", p:"Uma matriz tem <b>linhas</b> e <b>colunas</b>. Você acessa com <code>m[linha][coluna]</code>, e os dois índices começam em 0.", code:C`int m[2][3] = {
+    {1, 2, 3},
+    {4, 5, 6}
+};
+printf("%d", m[1][2]); // 6`, html:gridM([[1,2,3],[4,5,6]],[1,2]), note:"<b>Elementos</b> = linhas × colunas. <code>m[2][3]</code> tem 6."},
+   {h:"Dois for aninhados", p:"O <code>for</code> de fora anda nas linhas (<code>i</code>); o de dentro, nas colunas (<code>j</code>).", code:C`int matriz[3][3];
+int soma = 0;
+for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+        scanf("%d", &matriz[i][j]);
+        soma += matriz[i][j];
+    }
+}`},
+   {h:"Multiplicação 2×2", p:"Cada posição de C é a linha de A “vezes” a coluna de B: <code>C[i][j] = A[i][0]*B[0][j] + A[i][1]*B[1][j]</code>.", code:C`for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 2; j++) {
+        matriz_C[i][j] = 0;          // evita lixo de memória
+        for (int k = 0; k < 2; k++) {
+            matriz_C[i][j] += matriz_A[i][k] * matriz_B[k][j];
+        }
+    }
+}`, note:"<b>i</b> fixa a linha de A e C · <b>j</b> fixa a coluna de B e C · <b>k</b> percorre a dimensão comum."},
+   {h:"Soma de matrizes", p:"Na soma, cada posição soma com a <b>mesma posição</b> da outra matriz. Exemplo dos sensores de temperatura:", code:C`float sensor1[2][2] = {{22.5, 23.1}, {21.7, 24.2}};
+float sensor2[2][2] = {{0.5, 0.9}, {0.7, 0.2}};
+resultado[i][j] = sensor1[i][j] + sensor2[i][j];
+// resultado = {{23.0, 24.0}, {22.4, 24.4}}`}
+  ],
+  qs:[
+   {t:"mc", q:"Quantos elementos tem `int m[2][3];`?", opts:["6","5","23","3"], exp:"2 linhas × 3 colunas = 6 elementos."},
+   {t:"mc", q:"O que é impresso?", code:C`int m[2][2] = {{1, 2}, {3, 4}};
+printf("%d", m[1][0]);`, opts:["3","2","4","1"], exp:"Linha 1 (a segunda) = {3, 4}. Coluna 0 dessa linha = 3."},
+   {t:"type", q:"Digite o que é impresso:", code:C`int m[3][3] = {{1,2,3},{4,5,6},{7,8,9}};
+int soma = 0;
+for (int i = 0; i < 3; i++)
+    for (int j = 0; j < 3; j++)
+        soma += m[i][j];
+printf("%d", soma);`, a:"45", exp:"1 + 2 + … + 9 = 45."},
+   {t:"mc", q:"Por que `matriz_C[i][j] = 0;` vem antes do laço do `k`?", opts:["Para não somar lixo de memória ao acumular com +=","Para apagar a matriz A","Porque matriz não aceita negativos","Não precisa, é só estilo"], exp:"Variável local não inicializada tem lixo. Como usamos +=, ela precisa começar em 0."},
+   {t:"mc", q:"Quanto vale `C[0][1]`?", code:C`A = {{1, 2}, {3, 4}}
+B = {{1, 0}, {0, 1}}
+C = A × B`, opts:["2","0","1","4"], exp:"C[0][1] = A[0][0]*B[0][1] + A[0][1]*B[1][1] = 1*0 + 2*1 = 2. Multiplicar pela identidade devolve A."},
+   {t:"mc", q:"Na multiplicação, qual variável percorre a **dimensão comum** (colunas de A e linhas de B)?", opts:["k","i","j","n"], exp:"i = linha de A/C, j = coluna de B/C, k = índice que é multiplicado e somado."},
+   {t:"tf", q:"Em `m[i][j]`, normalmente `i` é a linha e `j` é a coluna.", a:true, exp:"Primeiro índice = linha, segundo = coluna."},
+   {t:"type", q:"Quanto vale `C[0][0]`?", code:C`A = {{1, 2}, {3, 4}}
+B = {{2, 0}, {1, 2}}
+C = A × B`, a:"4", exp:"Linha 0 de A × coluna 0 de B: 1*2 + 2*1 = 4."},
+   {t:"order", q:"Monte a linha de dentro da multiplicação:", ans:["matriz_C[i][j]","+=","matriz_A[i][k]","*","matriz_B[k][j];"], alt:[["matriz_C[i][j]","+=","matriz_B[k][j];","*","matriz_A[i][k]"]], extra:["matriz_B[j][k];","="], exp:"A usa [i][k] (linha i), B usa [k][j] (coluna j). E += acumula."},
+   {t:"mc", q:"O que imprime `printf(\"%.1f\", resultado[0][1]);`?", code:C`float sensor1[2][2] = {{22.5, 23.1}, {21.7, 24.2}};
+float sensor2[2][2] = {{0.5, 0.9}, {0.7, 0.2}};
+// resultado[i][j] = sensor1[i][j] + sensor2[i][j];`, opts:["24.0","23.1","24","22.0"], exp:"23.1 + 0.9 = 24.0. O %.1f mostra sempre 1 casa decimal."},
+   {t:"mc", q:"Para ler uma matriz 3×3 com dois `for`, quantas vezes o `scanf` roda?", opts:["9","3","6","1"], exp:"3 linhas × 3 colunas = 9 leituras."}
+  ]},
+
+{ id:"fun", title:"Funções", sub:"Blocos que recebem, processam e devolvem", color:"--purple",
+  slides:[
+   {h:"O que é uma função?", p:"Um bloco de código com uma tarefa. Ela <b>recebe</b> (ou não) valores, <b>processa</b> e <b>devolve</b> (ou não) um resultado. O <code>main()</code> também é uma função: é onde tudo começa.", code:C`int soma(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    int resultado = soma(5, 3);
+    printf("Resultado: %d\n", resultado); // 8
+    return 0;
+}`, note:"<b>Vantagens:</b> evita repetição · organiza · deixa legível · reutiliza · facilita testes."},
+   {h:"Anatomia", p:"Toda função tem 4 partes:", html:`<div class="anat"><span class="a1">float</span> <span class="a2">media</span>(<span class="a3">float a, float b</span>) <span class="a4">{ return (a + b) / 2; }</span></div><div class="legend"><span><i class="a1"></i>tipo de retorno</span><span><i class="a2"></i>nome</span><span><i class="a3"></i>parâmetros</span><span><i class="a4"></i>corpo</span></div>`},
+   {h:"Com retorno × void", p:"Se devolve valor, o tipo é diferente de <code>void</code> e usa <code>return valor;</code>. Se não devolve nada, é <code>void</code>.", code:C`float media(float a, float b) {   // devolve float
+    return (a + b) / 2;
+}
+
+void exibirMensagem() {           // não devolve nada
+    printf("Bem-vindo ao sistema!\n");
+}`, note:"Uma função <b>void</b> não usa <code>return</code> com valor."},
+   {h:"Protótipo", p:"Se a função vem <b>depois</b> do <code>main</code>, declare o protótipo antes. Ele avisa o compilador que a função existe e como usá-la.", code:C`int soma(int a, int b);   // protótipo
+
+int main() {
+    printf("%d\n", soma(4, 6));
+    return 0;
+}
+
+int soma(int a, int b) {  // definição
+    return a + b;
+}`}
+  ],
+  qs:[
+   {t:"mc", q:"Em `float media(float a, float b)`, qual é o **tipo de retorno**?", opts:["float","media","a e b","void"], exp:"O que vem antes do nome é o tipo de retorno. a e b são parâmetros."},
+   {t:"mc", q:"Uma função que **não devolve** valor tem tipo de retorno:", opts:["void","int","null","return"], exp:"void = “vazio”: a função só executa, não devolve nada."},
+   {t:"type", q:"O que é impresso?", code:C`int quadrado(int n) {
+    return n * n;
+}
+int main() {
+    printf("%d", quadrado(7));
+}`, a:"49", exp:"7 × 7 = 49."},
+   {t:"mc", q:"A linha `int soma(int a, int b);` antes do `main` é:", opts:["O protótipo da função","Uma chamada da função","Um erro (falta o corpo)","Uma variável global"], exp:"Termina em ; e não tem corpo: é o protótipo. A definição completa pode vir depois do main."},
+   {t:"tf", q:"Uma função `void` deve terminar com `return valor;`.", a:false, exp:"void não devolve valor. No máximo usa `return;` sozinho para sair antes."},
+   {t:"type", q:"O que é impresso?", code:C`int maior(int a, int b) {
+    if (a > b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+printf("Maior: %d", maior(10, 25));`, a:["Maior: 25","25"], exp:"10 > 25 é falso, então retorna b = 25."},
+   {t:"mc", q:"O que imprime?", code:C`float calcularDesconto(float valor, float percentual) {
+    return valor - (valor * percentual / 100);
+}
+printf("%.2f", calcularDesconto(200.0, 10.0));`, opts:["180.00","20.00","190.00","200.00"], exp:"200 − (200 × 10 / 100) = 200 − 20 = 180.00."},
+   {t:"mc", q:"O que imprime?", code:C`float calcular_media(float n1, float n2, float n3) {
+    return (n1 + n2 + n3) / 3;
+}
+printf("%.1f", calcular_media(10, 4, 3));`, opts:["5.7","5.6","17.0","5.66"], exp:"17 / 3 = 5,666… e o %.1f arredonda para 5.7."},
+   {t:"fill", q:"Complete com o tipo certo:", code:C`___ exibirMensagem() {
+    printf("Bem-vindo!");
+}`, opts:["void","int","float","return"], exp:"A função só imprime e não devolve nada: void."},
+   {t:"mc", q:"O que imprime `verificarPar(15);`?", code:C`void verificarPar(int numero) {
+    if (numero % 2 == 0) printf("Numero par");
+    else printf("Numero impar");
+}`, opts:["Numero impar","Numero par","15","Nada"], exp:"15 % 2 = 1 (resto), então não é par."},
+   {t:"type", q:"O que imprime?", code:C`double converter(double c) {
+    return (c * 9 / 5) + 32;
+}
+printf("%.2f", converter(28));`, a:"82.40", exp:"28 × 9 / 5 = 50,4. 50,4 + 32 = 82,40."},
+   {t:"mc", q:"Os **parâmetros** de uma função servem para:", opts:["Receber valores para a função trabalhar","Devolver o resultado","Dar nome à função","Encerrar o programa"], exp:"Parâmetros são as entradas. A saída é o return."}
+  ]},
+
+{ id:"rec", title:"Recursão e cópias", sub:"Fatorial, caso base e passagem por valor", color:"--orange",
+  slides:[
+   {h:"Fatorial com for", p:"<code>n! = n × (n−1) × … × 2 × 1</code>. Exemplo: <code>5! = 120</code>, e <code>0! = 1</code>.", code:C`int calcular_fatorial(int numero) {
+    int resultado = 1;
+    for (int i = 1; i <= numero; i++) {
+        resultado = resultado * i;
+    }
+    return resultado;
+}`},
+   {h:"Recursão: a função chama a si mesma", p:"Duas partes obrigatórias: o <b>caso base</b> (para a recursão) e a <b>chamada recursiva</b> (problema menor).", code:C`int calcular_fatorial_recursivo(int numero) {
+    if (numero == 0 || numero == 1) {   // caso base
+        return 1;
+    }
+    return numero * calcular_fatorial_recursivo(numero - 1);
+}`, html:`<div class="stack"><div style="--d:0">fatorial(5) = 5 * fatorial(4)</div><div style="--d:1">fatorial(4) = 4 * fatorial(3)</div><div style="--d:2">fatorial(3) = 3 * fatorial(2)</div><div style="--d:3">fatorial(2) = 2 * fatorial(1)</div><div style="--d:4">fatorial(1) = 1 ← caso base</div></div>`, note:"Sem caso base, a função se chama para sempre até estourar a pilha (<b>stack overflow</b>). Boa para problemas naturalmente recursivos: árvores, Torre de Hanói, Fibonacci."},
+   {h:"Passagem por valor = cópia", p:"Em C, a função recebe uma <b>cópia</b> do valor. Mudar o parâmetro não muda a variável original.", code:C`void alterar(int x) {
+    x = 100;          // muda só a cópia
+}
+int main() {
+    int numero = 10;
+    alterar(numero);
+    printf("%d\n", numero);   // 10
+}`, note:"Quer mudar a original? Passe o <b>endereço</b> (ponteiro). Isso é a próxima fase."}
+  ],
+  qs:[
+   {t:"mc", q:"Qual é o **caso base** de `calcular_fatorial_recursivo`?", opts:["if (numero == 0 || numero == 1) return 1;","return numero * calcular_fatorial_recursivo(numero - 1);","int resultado = 1;","for (int i = 1; i <= numero; i++)"], code_opts:true, exp:"O caso base é a condição que para a recursão e devolve um valor direto."},
+   {t:"type", q:"Quanto retorna `calcular_fatorial_recursivo(5)`?", a:"120", exp:"5 × 4 × 3 × 2 × 1 = 120."},
+   {t:"mc", q:"O que acontece com uma recursão **sem caso base**?", opts:["Chama a si mesma sem parar até estourar a pilha","Retorna 0 automaticamente","O compilador cria um caso base","Roda só uma vez"], exp:"Cada chamada ocupa memória na pilha; sem condição de parada, ela acaba (stack overflow)."},
+   {t:"type", q:"O que é impresso?", code:C`void alterar(int x) {
+    x = 100;
+}
+int main() {
+    int numero = 10;
+    alterar(numero);
+    printf("%d", numero);
+}`, a:"10", exp:"Passagem por valor: alterar mexeu só na cópia x. numero continua 10."},
+   {t:"mc", q:"Como `fatorial(4)` se expande?", opts:["4 * 3 * 2 * 1","4 + 3 + 2 + 1","4 * 4 * 4 * 4","4 * 3"], exp:"fatorial(4) = 4 * fatorial(3) = 4 * 3 * fatorial(2) = 4 * 3 * 2 * 1 = 24."},
+   {t:"type", q:"Quanto retorna `calcular_fatorial(0)` (versão com `for`)?", code:C`int calcular_fatorial(int numero) {
+    int resultado = 1;
+    for (int i = 1; i <= numero; i++) {
+        resultado = resultado * i;
+    }
+    return resultado;
+}`, a:"1", exp:"1 <= 0 é falso: o for nem roda e resultado continua 1. E 0! = 1 mesmo."},
+   {t:"type", q:"Quanto retorna `f(4)`?", code:C`int f(int n) {
+    if (n == 0) return 0;
+    return n + f(n - 1);
+}`, a:"10", exp:"4 + 3 + 2 + 1 + 0 = 10."},
+   {t:"tf", q:"Ao chamar `alterar(numero)`, a função recebe uma **cópia** do valor de `numero`.", a:true, exp:"Em C os argumentos são passados por valor: a função trabalha numa cópia."},
+   {t:"order", q:"Monte a chamada recursiva do fatorial:", ans:["return","numero","*","calcular_fatorial_recursivo(","numero - 1",");"], extra:["numero + 1","+"], exp:"return numero * calcular_fatorial_recursivo(numero - 1); — cada chamada resolve um problema menor."},
+   {t:"mc", q:"Por que `calcular_fatorial(13)` com `int` dá um número estranho?", opts:["13! = 6.227.020.800 não cabe num int (estouro)","Porque 13 é ímpar","Recursão não aceita 13","O for para no 12"], exp:"Um int de 32 bits vai até ~2,1 bilhões. 13! passa disso e “dá a volta” (overflow)."}
+  ]},
+
+{ id:"ptr", title:"Ponteiros", sub:"& endereço de · * conteúdo de", color:"--red",
+  slides:[
+   {h:"Toda variável mora num endereço", p:"A memória é uma rua de casinhas numeradas. <code>&x</code> = <b>endereço de</b> x. Um <b>ponteiro</b> é uma variável que guarda um endereço.", html:mem([{a:"1000",v:"25",lb:"idade",cls:"hl"},"…",{a:"2000",v:"1000",lb:"p (aponta p/ idade)",cls:"pt"}]),
+    code:C`int idade = 25;
+int *p = &idade;   // p guarda 1000, o endereço de idade`},
+   {h:"* = conteúdo de", p:"Usando <code>*p</code> você lê ou altera <b>o valor que está no endereço</b> guardado em p.", code:C`int idade = 25;
+int *p = &idade;
+printf("%d\n", *p);   // 25
+*p = 30;              // muda idade!
+printf("%d\n", idade); // 30
+printf("%p\n", p);     // mostra o endereço`, note:"Na <b>declaração</b> (<code>int *p</code>) o * diz que p é ponteiro. No <b>uso</b> (<code>*p</code>) o * acessa o valor apontado."},
+   {h:"Mudar a original numa função", p:"Passando o <b>endereço</b>, a função trabalha na variável original, não numa cópia.", code:C`void aniversario(int *idade) {
+    (*idade)++;     // mexe na variável original
+}
+int main() {
+    int idade = 25;
+    aniversario(&idade);   // passa o endereço
+    printf("%d", idade);   // 26
+}`, note:"Use parênteses: <code>(*idade)++</code>. Sem eles, <code>*idade++</code> anda com o ponteiro em vez de somar no valor."},
+   {h:"Cuidados", p:"Um ponteiro não inicializado aponta para lixo. Inicialize com <code>NULL</code> até ter um endereço válido. O tipo do ponteiro acompanha o tipo da variável: <code>float *</code> para float, <code>int *</code> para int.", code:C`int *p = NULL;   // seguro: ainda não aponta para nada
+float nota = 9.5;
+float *pn = &nota;`}
+  ],
+  qs:[
+   {t:"mc", q:"`&x` significa:", opts:["O endereço de x","O valor de x","Um ponteiro para ponteiro","x multiplicado"], exp:"& = “endereço de”."},
+   {t:"type", q:"O que é impresso?", code:C`int x = 5;
+int *p = &x;
+*p = 20;
+printf("%d", x);`, a:"20", exp:"p aponta para x. *p = 20 escreve 20 dentro de x."},
+   {t:"mc", q:"Qual declara um ponteiro para `int`?", co:true, opts:["int *p;","int &p;","pointer int p;","int p*;"], exp:"Tipo + * + nome: int *p;"},
+   {t:"mc", q:"Depois de `int x = 10; int *p = &x;`, o que `p` guarda?", opts:["O endereço de x","O valor 10","Uma cópia de x","Nada (NULL)"], exp:"p guarda o endereço. Para ver o 10, use *p."},
+   {t:"mc", q:"Qual formato do `printf` mostra um endereço?", co:true, opts:["%p","%d","%f","%c"], exp:"%p é o especificador para ponteiros (endereços)."},
+   {t:"type", q:"O que é impresso? (dois números separados por espaço)", code:C`int a = 3, b = 7;
+int *p = &a;
+p = &b;
+*p = *p + 1;
+printf("%d %d", a, b);`, a:"3 8", exp:"p passou a apontar para b. *p + 1 = 8 vai para b. a não muda."},
+   {t:"tf", q:"Em `int *p;` o `*` indica que p é ponteiro; já em `*p = 5;` o `*` acessa o valor apontado.", a:true, exp:"Mesmo símbolo, dois papéis: declarar ponteiro × acessar conteúdo."},
+   {t:"fill", q:"Complete para a função alterar a variável original:", code:C`void aniversario(int *idade) { (*idade)++; }
+
+int idade = 25;
+aniversario(___idade);`, opts:["&","*","**","(nada)"], exp:"A função espera um int*, então passamos o endereço: &idade."},
+   {t:"mc", q:"Depois de `aniversario(&idade);` com `idade = 25`, quanto vale `idade`?", code:C`void aniversario(int *idade) {
+    (*idade)++;
+}`, opts:["26","25","1001","Erro"], exp:"(*idade)++ soma 1 no valor que está no endereço: 25 → 26."},
+   {t:"mc", q:"O que é mais seguro para um ponteiro que ainda não tem endereço válido?", opts:["Inicializar com NULL","Deixar sem inicializar","Inicializar com 0.5","Usar *p = 0 direto"], exp:"Ponteiro sem inicializar aponta para lixo. NULL deixa claro que ainda não aponta para nada."},
+   {t:"type", q:"O que é impresso?", code:C`int x = 4;
+int *p = &x;
+int y = *p * 2;
+printf("%d", y);`, a:"8", exp:"*p = 4. 4 * 2 = 8."}
+  ]},
+
+{ id:"pvet", title:"Ponteiros × vetores", sub:"Aritmética de ponteiros e inversão", color:"--sky",
+  slides:[
+   {h:"O nome do vetor é um endereço", p:"<code>notas</code> sozinho já é o endereço do primeiro elemento: <code>notas == &notas[0]</code>. Por isso <code>float *p = notas;</code> funciona sem &.", html:mem([{a:"1000",v:"5.5",i:"[0]",cls:"pt"},{a:"1004",v:"7.5",i:"[1]"},{a:"1008",v:"9.0",i:"[2]"},{a:"1012",v:"3.0",i:"[3]"}]), code:C`float notas[] = {5.5, 7.5, 9, 3};
+float *ptr_notas = notas;   // aponta para notas[0]`},
+   {h:"Aritmética de ponteiros", p:"<code>p + 1</code> não soma 1 byte: anda <b>um elemento</b> (4 bytes num int/float). Então:", code:C`*(p + i)  ==  p[i]  ==  notas[i]
+// p + 2 → endereço 1008 → *(p + 2) = 9.0
+p++;  // agora p aponta para notas[1]`},
+   {h:"Maior nota com ponteiro", p:"O ponteiro <code>maior</code> guarda o <b>endereço</b> da maior nota encontrada.", code:C`int numero = sizeof(notas) / sizeof(notas[0]);
+float *ptr_notas = notas;
+float *maior = ptr_notas;
+for (int i = 0; i < numero; i++) {
+    if (*(ptr_notas + i) > *maior) {
+        maior = ptr_notas + i;
+    }
+}
+printf("-> Maior nota %.2f\n", *maior);  // 9.00`},
+   {h:"Inverter um vetor", p:"Dois ponteiros: um no começo, outro no fim. Troca e caminha até se cruzarem.", code:C`int codigos[] = {101, 102, 103, 104};
+int *inicio = codigos;
+int *fim = codigos + numero - 1;   // último
+while (inicio < fim) {
+    int temp = *inicio;
+    *inicio = *fim;
+    *fim = temp;
+    inicio++;
+    fim--;
+}
+// {104, 103, 102, 101}`}
+  ],
+  qs:[
+   {t:"mc", q:"`*(v + 2)` é o mesmo que:", co:true, opts:["v[2]","v + 2","&v[2]","v[0] + 2"], exp:"v + 2 é o endereço do elemento 2; o * pega o valor dele."},
+   {t:"mc", q:"`int v[4]` começa no endereço 1000 (int = 4 bytes). Qual é o endereço de `v + 3`?", opts:["1012","1003","1004","1016"], exp:"Cada passo anda 4 bytes: 1000 + 3 × 4 = 1012."},
+   {t:"type", q:"O que é impresso?", code:C`float notas[] = {5.5, 7.5, 9, 3};
+float *p = notas;
+printf("%.1f", *(p + 1));`, a:"7.5", exp:"p + 1 aponta para notas[1] = 7.5."},
+   {t:"type", q:"O que o programa imprime? (separe com espaço)", code:C`int codigos[] = {101, 102, 103, 104};
+int *inicio = codigos;
+int *fim = codigos + 3;
+while (fim >= inicio) {
+    int temp = *inicio;
+    *inicio = *fim;
+    *fim = temp;
+    inicio++; fim--;
+}
+for (int *p = codigos; p < codigos + 4; p++)
+    printf("%d ", *p);`, a:"104 103 102 101", exp:"Troca 101↔104, depois 102↔103, e os ponteiros se cruzam."},
+   {t:"mc", q:"`int *fim = codigos + numero - 1;` aponta para:", opts:["O último elemento","Uma posição depois do fim","O primeiro elemento","O penúltimo"], exp:"codigos + 0 é o primeiro; codigos + (numero − 1) é o último."},
+   {t:"mc", q:"Depois de `int *p = v; p++;`, para onde p aponta?", opts:["v[1]","v[0] + 1 (valor)","Para o fim do vetor","Para lugar nenhum"], exp:"p++ avança um elemento: de &v[0] para &v[1]."},
+   {t:"tf", q:"`float *p = notas;` precisa ser escrito `float *p = &notas;` para funcionar.", a:false, exp:"O nome do vetor já é o endereço do primeiro elemento. Sem & é o jeito certo."},
+   {t:"mc", q:"No código da maior nota, o que a variável `maior` guarda?", code:C`float *maior = ptr_notas;
+if (*(ptr_notas + i) > *maior)
+    maior = ptr_notas + i;`, opts:["O endereço da maior nota","O valor da maior nota","O índice da maior nota","A soma das notas"], exp:"maior é float*: guarda endereço. Por isso o printf usa *maior para mostrar o valor."},
+   {t:"type", q:"O que é impresso?", code:C`int v[] = {10, 20, 30};
+int *p = v + 2;
+printf("%d", *p - *v);`, a:"20", exp:"*p = v[2] = 30 e *v = v[0] = 10. 30 − 10 = 20."},
+   {t:"order", q:"Ordene as 3 linhas da **troca** dentro do while:", lines:true, ans:["int temp = *inicio;","*inicio = *fim;","*fim = temp;"], extra:["*fim = *inicio;"], exp:"Guarda o início em temp, copia o fim para o início, e coloca temp no fim."},
+   {t:"mc", q:"Trocando `while (fim >= inicio)` por `while (inicio < fim)`, o que muda?", opts:["Funciona igual; só evita trocar o elemento do meio com ele mesmo","O vetor não é mais invertido","Dá erro de compilação","Inverte duas vezes e volta ao normal"], exp:"Quando inicio == fim, trocar o elemento consigo mesmo não muda nada. inicio < fim só pula esse passo."}
+  ]},
+
+{ id:"pref", title:"Ponteiros em ação", sub:"Matrizes, swap e passagem por referência", color:"--purple",
+  slides:[
+   {h:"Matriz com ponteiros", p:"A matriz fica na memória <b>linha após linha</b>. <code>m + i</code> pula uma linha inteira; <code>*(m + i) + j</code> anda até a coluna.", code:C`*(*(m + i) + j)  ==  m[i][j]`, html:mem([{a:"2000",v:"22.5",i:"[0][0]"},{a:"2004",v:"23.1",i:"[0][1]"},{a:"2008",v:"21.7",i:"[1][0]",cls:"hl"},{a:"2012",v:"24.2",i:"[1][1]"}])},
+   {h:"Somar matrizes de sensores", p:"Exercício da aula com ponteiros:", code:C`for (int i = 0; i < LINHA; i++) {
+    for (int j = 0; j < COLUNA; j++) {
+        *(*(resultado + i) + j) =
+            *(*(sensor1 + i) + j) + *(*(sensor2 + i) + j);
+    }
+}`},
+   {h:"Swap: trocar duas variáveis", p:"Com cópias (por valor) a troca se perde. Com ponteiros (por referência) a troca acontece nas originais.", code:C`void troca(int *a, int *b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+int x = 1, y = 2;
+troca(&x, &y);   // x = 2, y = 1`},
+   {h:"Vetor em função", p:"Quando você passa um vetor, a função recebe o <b>endereço do primeiro elemento</b>. Então ela pode alterar o vetor original.", code:C`void zerar(int *v, int n) {
+    for (int i = 0; i < n; i++) v[i] = 0;
+}
+int notas[3] = {7, 8, 9};
+zerar(notas, 3);   // notas agora = {0, 0, 0}`}
+  ],
+  qs:[
+   {t:"mc", q:"`*(*(m + i) + j)` é o mesmo que:", co:true, opts:["m[i][j]","m[j][i]","m[i] + j","&m[i][j]"], exp:"m + i escolhe a linha, + j a coluna, e os * pegam o valor."},
+   {t:"type", q:"O que imprime `printf(\"%.1f\", resultado[1][1]);`?", code:C`float sensor1[2][2] = {{22.5, 23.1}, {21.7, 24.2}};
+float sensor2[2][2] = {{0.5, 0.9}, {0.7, 0.2}};
+*(*(resultado + i) + j) = *(*(sensor1 + i) + j) + *(*(sensor2 + i) + j);`, a:"24.4", exp:"24.2 + 0.2 = 24.4."},
+   {t:"mc", q:"O que é impresso?", code:C`void troca(int *a, int *b) {
+    int t = *a; *a = *b; *b = t;
+}
+int x = 1, y = 2;
+troca(&x, &y);
+printf("%d %d", x, y);`, opts:["2 1","1 2","2 2","1 1"], exp:"Com ponteiros a troca acontece nas variáveis originais."},
+   {t:"mc", q:"E nesta versão sem ponteiros?", code:C`void troca(int a, int b) {
+    int t = a; a = b; b = t;
+}
+int x = 1, y = 2;
+troca(x, y);
+printf("%d %d", x, y);`, opts:["1 2","2 1","2 2","Erro"], exp:"Passagem por valor: a função trocou só as cópias. x e y não mudam."},
+   {t:"tf", q:"Uma função que recebe um vetor pode alterar os elementos do vetor original.", a:true, exp:"O vetor é passado como endereço do primeiro elemento, então a função mexe no original."},
+   {t:"fill", q:"Complete o parâmetro:", code:C`void dobrar(int ___n) {
+    *n = *n * 2;
+}`, opts:["*","&","[]","(nada)"], exp:"Para usar *n dentro, n tem que ser ponteiro: int *n."},
+   {t:"type", q:"O que é impresso?", code:C`void dobrar(int *n) { *n = *n * 2; }
+
+int k = 6;
+dobrar(&k);
+printf("%d", k);`, a:"12", exp:"A função recebe o endereço de k e dobra o valor original."},
+   {t:"mc", q:"`int m[2][3]` começa em 2000 (int = 4 bytes). Qual o endereço de `m[1][0]`?", opts:["2012","2004","2008","2024"], exp:"A linha 0 tem 3 ints (12 bytes). A linha 1 começa em 2000 + 12 = 2012."},
+   {t:"mc", q:"Ao passar um vetor para uma função, o que ela recebe?", opts:["O endereço do primeiro elemento","Uma cópia do vetor inteiro","Só o primeiro valor","O tamanho do vetor"], exp:"Por isso é comum passar o tamanho junto: zerar(v, n)."},
+   {t:"mc", q:"Qual a diferença entre passar **por valor** e **por referência (ponteiro)**?", opts:["Por valor manda cópia; por ponteiro manda o endereço e permite alterar a original","São iguais em C","Por valor é mais lento sempre","Por ponteiro faz uma cópia do valor"], exp:"Cópia = original protegida. Endereço = a função pode mudar a original."}
+  ]},
+
+{ id:"str", title:"Structs", sub:"Fichas com campos de tipos diferentes", color:"--orange",
+  slides:[
+   {h:"Struct = ficha de cadastro", p:"Struct é uma estrutura <b>heterogênea</b>: junta dados de <b>tipos diferentes</b> sobre uma mesma coisa. Com <code>typedef</code> você dá um nome ao novo tipo.", code:C`typedef struct {
+    int   matricula;
+    char  nome[100];
+    float nota;
+} Aluno;`, html:`<div class="fields"><div class="fh">Aluno aluno01</div><div class="fr"><b>int</b><span>matricula</span><span>1</span></div><div class="fr"><b>char[100]</b><span>nome</span><span>"Márcio"</span></div><div class="fr"><b>float</b><span>nota</span><span>5.0</span></div></div>`},
+   {h:"Acessar com ponto", p:"Use <code>variavel.campo</code> para ler e escrever cada campo.", code:C`Aluno aluno01;
+aluno01.matricula = 1;
+strcpy(aluno01.nome, "Márcio");
+aluno01.nota = 5.0;
+
+printf("-> Nome: %s\n", aluno01.nome);
+printf("-> Nota: %.1f\n", aluno01.nota);`},
+   {h:"Texto em struct: strcpy", p:"Não dá para fazer <code>aluno01.nome = \"Márcio\";</code>. Array de char não aceita <code>=</code> depois de declarado. Use <code>strcpy</code> de <code>&lt;string.h&gt;</code>. Na <b>inicialização</b>, as chaves funcionam:", code:C`#include <string.h>
+strcpy(aluno01.nome, "Márcio");   // certo
+Aluno a = {1, "Ana", 8.5};        // também certo (inicialização)`, note:"<b>bool</b> (true/false) precisa de <code>#include &lt;stdbool.h&gt;</code>, como no campo <code>disponivel</code> do Livro."},
+   {h:"Ponteiro para struct: ->", p:"Com um ponteiro para struct, a seta <code>-></code> acessa o campo. É um atalho para <code>(*p).campo</code>.", code:C`Aluno a = {1, "Ana", 8.5};
+Aluno *p = &a;
+p->nota = 9.0;          // igual a (*p).nota = 9.0
+printf("%.1f", a.nota); // 9.0`}
+  ],
+  qs:[
+   {t:"mc", q:"Para que serve uma **struct**?", opts:["Agrupar dados de tipos diferentes sobre uma mesma coisa","Guardar vários valores do mesmo tipo","Repetir um bloco de código","Apontar para um endereço"], exp:"Ex.: um aluno tem matrícula (int), nome (char[]) e nota (float)."},
+   {t:"mc", q:"Como acessar o campo `nota` da variável `aluno01`?", co:true, opts:["aluno01.nota","aluno01->nota","Aluno.nota","nota(aluno01)"], exp:"Variável comum usa ponto. A seta -> é para ponteiro de struct."},
+   {t:"mc", q:"O que há de errado aqui?", code:C`Aluno aluno01;
+aluno01.nome = "Márcio";`, opts:["Não se atribui texto a char[] com =; use strcpy","Faltou o & antes de aluno01","nome deveria ser int","Nada, está certo"], exp:"Depois de declarado, um array de char só recebe texto com strcpy(aluno01.nome, \"Márcio\")."},
+   {t:"fill", q:"Complete:", code:C`___(aluno01.nome, "Márcio");`, opts:["strcpy","strcmp","printf","scanf"], exp:"strcpy copia o texto para dentro do campo. strcmp só compara."},
+   {t:"tf", q:"Com `typedef struct {...} Aluno;` dá para declarar `Aluno a;` sem escrever `struct`.", a:true, exp:"É para isso que o typedef serve: criar um nome curto para o tipo."},
+   {t:"type", q:"O que é impresso?", code:C`Aluno a = {7, "Ana", 8.5};
+printf("%d", a.matricula);`, a:"7", exp:"Os valores entram na ordem dos campos: matricula = 7, nome = \"Ana\", nota = 8.5."},
+   {t:"mc", q:"Qual biblioteca é necessária para `strcpy` e `strcmp`?", co:true, opts:["<string.h>","<stdio.h>","<locale.h>","<stdbool.h>"], exp:"Funções de texto (string) ficam em string.h."},
+   {t:"mc", q:"Com `Aluno *p = &a;`, `p->nota` equivale a:", co:true, opts:["(*p).nota","*p.nota","&p.nota","p.nota"], exp:"A seta é atalho para (*p).nota. Os parênteses são obrigatórios na forma longa."},
+   {t:"order", q:"Monte a declaração do tipo Aluno:", ans:["typedef","struct","{ int matricula; char nome[100]; float nota; }","Aluno;"], extra:["class","Aluno."], exp:"typedef struct { campos } NomeDoTipo;"},
+   {t:"mc", q:"Notas 8 e 5. Qual mensagem o programa mostra?", code:C`float media = (alunos[i].nota1 + alunos[i].nota2) / 2;
+if (media >= 7) printf("Aprovado com sucesso!");
+else if (media >= 5) printf("Recuperação!");
+else printf("Reprovado!");`, opts:["Recuperação!","Aprovado com sucesso!","Reprovado!","Nada"], exp:"(8 + 5) / 2 = 6,5. Não chega a 7, mas é ≥ 5: recuperação."},
+   {t:"mc", q:"O campo `bool disponivel;` do Livro precisa de qual include?", co:true, opts:["<stdbool.h>","<string.h>","<bool.h>","Nenhum"], exp:"bool, true e false vêm de stdbool.h."}
+  ]},
+
+{ id:"vstr", title:"Vetor de structs", sub:"Cadastro de alunos e biblioteca", color:"--grass",
+  slides:[
+   {h:"Vetor de structs = tabela de fichas", p:"Cada posição do vetor é uma struct inteira. Primeiro o índice, depois o campo: <code>livros[i].titulo</code>.", code:C`Livro livros[10];
+livros[0].ano = 1997;
+strcpy(livros[0].titulo, "Dom Casmurro");
+livros[0].disponivel = true;`},
+   {h:"Lendo textos com espaço", p:"<code>%[^\\n]</code> lê <b>a linha inteira</b>, com espaços. O <b>espaço antes</b> do % pula o Enter que sobrou do scanf anterior.", code:C`scanf(" %[^\n]", livros[i].titulo);   // sem &: array já é endereço
+scanf("%d", &livros[i].ano);          // com &: int precisa`, note:"No seu código está <code>scanf(\" %[^\\n]\", &livros[i].autor);</code>. Esse <b>&</b> sobra: o nome do array já é o endereço. Escreva <code>livros[i].autor</code>."},
+   {h:"Buscar com strcmp", p:"Texto não se compara com <code>==</code>. <code>strcmp(a, b)</code> devolve <b>0 quando são iguais</b>.", code:C`for (i = 0; i < qtdCadastro; i++) {
+    if (strcmp(livros[i].titulo, titulo) == 0) {
+        if (livros[i].disponivel) {
+            livros[i].disponivel = false;
+            printf("Livro emprestado!\n");
+        } else {
+            printf("Livro não disponivel!\n");
+        }
+        break;
+    }
+}
+if (i == qtdCadastro) printf("Livro não encontrado!");`, note:"Se o <code>break</code> não rodou, o for terminou com <code>i == qtdCadastro</code>: não achou."},
+   {h:"Devolução (a parte que faltava)", p:"Mesma busca, lógica invertida: só devolve se estiver emprestado.", code:C`if (strcmp(livros[i].titulo, titulo) == 0) {
+    if (!livros[i].disponivel) {
+        livros[i].disponivel = true;
+        printf("Livro devolvido!\n");
+    } else {
+        printf("Esse livro não estava emprestado.\n");
+    }
+    break;
+}`}
+  ],
+  qs:[
+   {t:"mc", q:"O que faz `scanf(\" %[^\\n]\", nome);`?", opts:["Lê a linha inteira, inclusive espaços","Lê só a primeira palavra","Lê um número","Lê um caractere"], exp:"%[^\\n] = “leia tudo que não for \\n”. Assim “Márcio Silva” entra inteiro."},
+   {t:"mc", q:"Para que serve o **espaço** antes do `%[^\\n]`?", opts:["Pular o Enter (\\n) que sobrou do scanf anterior","Ler um espaço obrigatório","Limitar a 1 palavra","Nada, é decorativo"], exp:"Depois de digitar um número e Enter, o \\n fica no buffer. O espaço consome esse lixo."},
+   {t:"mc", q:"No código da biblioteca há este detalhe. O que dizer do `&`?", code:C`scanf(" %[^\n]", &livros[i].autor);`, opts:["Sobra: o nome do array de char já é o endereço","Está certo, scanf sempre precisa de &","Deveria ser *","Faltou um segundo &"], exp:"Para char[] use livros[i].autor sem &. O & só é necessário para int, float, char simples…"},
+   {t:"mc", q:"`strcmp(a, b) == 0` significa que:", opts:["As strings são iguais","As strings são diferentes","a é vazia","Deu erro"], exp:"strcmp devolve 0 para iguais, e um número ≠ 0 quando diferem."},
+   {t:"tf", q:"Em C dá para comparar duas strings com `==`.", a:false, exp:"== compara endereços, não o texto. Use strcmp."},
+   {t:"mc", q:"Depois do `for` com `break`, o que significa `if (i == qtdCadastro)`?", opts:["O livro não foi encontrado","O livro foi emprestado","O último livro está disponível","O vetor está vazio"], exp:"Se tivesse achado, o break pararia o for antes de i chegar em qtdCadastro."},
+   {t:"mc", q:"Na **devolução**, qual linha marca o livro como disponível de novo?", co:true, opts:["livros[i].disponivel = true;","livros[i].disponivel = false;","livros.disponivel[i] = true;","disponivel = livros[i];"], exp:"Empréstimo põe false; devolução volta para true."},
+   {t:"mc", q:"Como acessar o título do **terceiro** livro?", co:true, opts:["livros[2].titulo","livros[3].titulo","livros.titulo[2]","titulo[2].livros"], exp:"Terceiro = índice 2. Primeiro o índice do vetor, depois o campo."},
+   {t:"type", q:"Quantos alunos são aprovados (média ≥ 7)?", code:C`// (nota1, nota2) de cada aluno:
+// Ana:   (8, 6)
+// Beto:  (4, 5)
+// Caio:  (9, 10)
+float media = (alunos[i].nota1 + alunos[i].nota2) / 2;`, a:"2", exp:"Ana 7,0 ✔ · Beto 4,5 ✘ · Caio 9,5 ✔ → 2 aprovados."},
+   {t:"mc", q:"`AlunoEx3 alunos[20];` e o usuário digita 25 como quantidade. O que acontece?", opts:["Escreve fora do vetor: erro / comportamento indefinido","O vetor cresce para 25","Só os 20 primeiros são lidos automaticamente","Nada, C ajusta sozinho"], exp:"O vetor tem 20 posições fixas. O ideal é validar: if (qtd > 20) …"},
+   {t:"mc", q:"Na leitura `scanf(\"%d\", &alunos[i].matricula);`, o `&` é:", opts:["Necessário, pois matricula é int","Desnecessário","Errado, deveria ser *","Opcional"], exp:"Para int/float o scanf precisa do endereço do campo."}
+  ]},
+
+{ id:"final", title:"Final do Campeonato", sub:"15 questões misturadas de tudo", color:"--coin", final:true, slides:[], qs:[] }
+];
+
+/* =================== PERSONAGENS =================== */
+const CHARS = [
+ {id:"byte", name:"Byte", price:0, desc:"Robô parceiro de estudos. Já vem no time."},
+ {id:"ponteirinho", name:"Ponteirinho", price:60, desc:"Sempre aponta para a resposta certa."},
+ {id:"structao", name:"Structão", price:120, desc:"Guarda int, char e float na mesma barriga."},
+ {id:"recursinho", name:"Recursinho", price:200, desc:"Tem um Recursinho dentro de outro Recursinho."},
+ {id:"bugzinho", name:"Bugzinho", price:300, desc:"O bug mais fofo do compilador."},
+ {id:"capitao", name:"Capitão &", price:450, desc:"Sabe o endereço de todo mundo."},
+ {id:"nullzinho", name:"Fantasma NULL", price:700, desc:"Não aponta para nada, mas assusta o Thalissom."},
+ {id:"campeao", name:"Taça de Ouro", price:1000, desc:"Só para quem vai tirar 10 na prova."}
+];
+
+function face(mood, cy=58, dark="#1A1A1A"){
+  const m = mood==="happy"||mood==="party" ? `<path d="M49 ${cy+14} Q60 ${cy+28} 71 ${cy+14} Z" fill="#4A1414"/><path d="M54 ${cy+20} Q60 ${cy+25} 66 ${cy+20} Z" fill="#FF7B8A"/>`
+        : mood==="sad" ? `<path d="M51 ${cy+22} Q60 ${cy+14} 69 ${cy+22}" stroke="${dark}" stroke-width="3.2" fill="none" stroke-linecap="round"/>`
+        : `<path d="M51 ${cy+15} Q60 ${cy+22} 69 ${cy+15}" stroke="${dark}" stroke-width="3.2" fill="none" stroke-linecap="round"/>`;
+  const brows = mood==="sad" ? `<path d="M40 ${cy-14} L52 ${cy-10} M80 ${cy-14} L68 ${cy-10}" stroke="${dark}" stroke-width="3" stroke-linecap="round"/>` : "";
+  return `<g class="eyes" style="transform-origin:60px ${cy}px"><ellipse cx="48" cy="${cy}" rx="8.5" ry="10" fill="#fff"/><ellipse cx="72" cy="${cy}" rx="8.5" ry="10" fill="#fff"/><circle cx="${mood==='sad'?47:49.5}" cy="${cy+(mood==='sad'?3:1)}" r="4.8" fill="${dark}"/><circle cx="${mood==='sad'?71:73.5}" cy="${cy+(mood==='sad'?3:1)}" r="4.8" fill="${dark}"/><circle cx="51" cy="${cy-2}" r="1.6" fill="#fff"/><circle cx="75" cy="${cy-2}" r="1.6" fill="#fff"/></g>${brows}<circle cx="38" cy="${cy+12}" r="5" fill="#FF8FA3" opacity=".55"/><circle cx="82" cy="${cy+12}" r="5" fill="#FF8FA3" opacity=".55"/>${m}`;
+}
+function avatar(id, mood="idle", cls=""){
+  let b="";
+  switch(id){
+    case "byte": b=`<ellipse cx="60" cy="112" rx="32" ry="5" fill="#000" opacity=".12"/><line x1="60" y1="14" x2="60" y2="30" stroke="#1F7A3D" stroke-width="4"/><circle cx="60" cy="12" r="7" fill="#FFC12E"/><rect x="40" y="96" width="14" height="14" rx="5" fill="#1F7A3D"/><rect x="66" y="96" width="14" height="14" rx="5" fill="#1F7A3D"/><rect x="18" y="28" width="84" height="74" rx="24" fill="#34B862"/><rect x="18" y="28" width="84" height="74" rx="24" fill="none" stroke="#1F7A3D" stroke-width="3"/><rect x="28" y="38" width="64" height="48" rx="16" fill="#DFF7E6"/><rect x="10" y="56" width="10" height="20" rx="5" fill="#1F7A3D"/><rect x="100" y="56" width="10" height="20" rx="5" fill="#1F7A3D"/>${face(mood,58)}`; break;
+    case "ponteirinho": b=`<ellipse cx="60" cy="112" rx="30" ry="5" fill="#000" opacity=".12"/><path d="M60 4 L84 36 L36 36 Z" fill="#1C5FC0"/><circle cx="60" cy="68" r="40" fill="#3D8BFF"/><circle cx="60" cy="68" r="40" fill="none" stroke="#1C5FC0" stroke-width="3"/><ellipse cx="60" cy="92" rx="18" ry="10" fill="#9CC6FF" opacity=".7"/><text x="60" y="101" text-anchor="middle" font-family="monospace" font-weight="900" font-size="20" fill="#1C5FC0">*</text>${face(mood,62)}`; break;
+    case "structao": b=`<ellipse cx="60" cy="112" rx="36" ry="5" fill="#000" opacity=".12"/><rect x="14" y="30" width="92" height="76" rx="14" fill="#FF8A3D"/><rect x="14" y="30" width="92" height="76" rx="14" fill="none" stroke="#C25E14" stroke-width="3"/><rect x="8" y="20" width="104" height="20" rx="8" fill="#C25E14"/><rect x="50" y="24" width="20" height="8" rx="4" fill="#FFD3A8"/><g font-family="monospace" font-weight="800" font-size="7.5" text-anchor="middle"><rect x="20" y="88" width="24" height="12" rx="4" fill="#FFE2C6"/><text x="32" y="97" fill="#8B3E00">int</text><rect x="48" y="88" width="24" height="12" rx="4" fill="#FFE2C6"/><text x="60" y="97" fill="#8B3E00">char</text><rect x="76" y="88" width="24" height="12" rx="4" fill="#FFE2C6"/><text x="88" y="97" fill="#8B3E00">float</text></g>${face(mood,56)}`; break;
+    case "recursinho": b=`<ellipse cx="60" cy="112" rx="32" ry="5" fill="#000" opacity=".12"/><ellipse cx="60" cy="64" rx="40" ry="46" fill="#8A5CF0"/><ellipse cx="60" cy="64" rx="40" ry="46" fill="none" stroke="#5A31B8" stroke-width="3"/><path d="M24 42 Q60 22 96 42" stroke="#FFC12E" stroke-width="6" fill="none" stroke-linecap="round"/><ellipse cx="60" cy="92" rx="17" ry="14" fill="#C9B2FF"/><ellipse cx="60" cy="92" rx="17" ry="14" fill="none" stroke="#5A31B8" stroke-width="2"/><circle cx="55" cy="90" r="2.2" fill="#1A1A1A"/><circle cx="65" cy="90" r="2.2" fill="#1A1A1A"/><path d="M56 96 Q60 99 64 96" stroke="#1A1A1A" stroke-width="1.6" fill="none"/><ellipse cx="60" cy="98" rx="5" ry="3" fill="#8A5CF0" opacity=".6"/>${face(mood,52)}`; break;
+    case "bugzinho": b=`<ellipse cx="60" cy="112" rx="34" ry="5" fill="#000" opacity=".12"/><g stroke="#3B1010" stroke-width="4" stroke-linecap="round"><path d="M24 62 L8 54 M22 78 L6 80 M26 92 L12 104 M96 62 L112 54 M98 78 L114 80 M94 92 L108 104"/><path d="M46 26 Q40 10 30 8 M74 26 Q80 10 90 8" fill="none"/></g><circle cx="30" cy="8" r="5" fill="#EE4F4C"/><circle cx="90" cy="8" r="5" fill="#EE4F4C"/><ellipse cx="60" cy="68" rx="40" ry="40" fill="#EE4F4C"/><ellipse cx="60" cy="68" rx="40" ry="40" fill="none" stroke="#9E1F1D" stroke-width="3"/><path d="M60 30 V106" stroke="#9E1F1D" stroke-width="3"/><circle cx="36" cy="88" r="6" fill="#4A1414"/><circle cx="84" cy="88" r="6" fill="#4A1414"/><circle cx="44" cy="100" r="4" fill="#4A1414"/><circle cx="76" cy="100" r="4" fill="#4A1414"/><ellipse cx="60" cy="52" rx="30" ry="24" fill="#2A1212"/>${face(mood,52,"#2A1212")}`; break;
+    case "capitao": b=`<ellipse cx="60" cy="112" rx="34" ry="5" fill="#000" opacity=".12"/><path d="M26 50 Q8 90 18 110 L60 98 L102 110 Q112 90 94 50 Z" fill="#E23E3B"/><circle cx="60" cy="64" r="38" fill="#FFC12E"/><circle cx="60" cy="64" r="38" fill="none" stroke="#C88A00" stroke-width="3"/><rect x="30" y="44" width="60" height="12" rx="6" fill="#1C5FC0" opacity=".9"/><circle cx="60" cy="92" r="11" fill="#fff"/><text x="60" y="98" text-anchor="middle" font-family="monospace" font-weight="900" font-size="16" fill="#E23E3B">&amp;</text>${face(mood,56)}`; break;
+    case "nullzinho": b=`<ellipse cx="60" cy="114" rx="28" ry="4" fill="#000" opacity=".1"/><path d="M22 104 V58 A38 38 0 0 1 98 58 V104 l-12.6 -9 l-12.7 9 l-12.7 -9 l-12.7 9 l-12.7 -9 Z" fill="#EDE8FF"/><path d="M22 104 V58 A38 38 0 0 1 98 58 V104 l-12.6 -9 l-12.7 9 l-12.7 -9 l-12.7 9 l-12.7 -9 Z" fill="none" stroke="#8C7CC8" stroke-width="3"/><rect x="40" y="82" width="40" height="13" rx="6" fill="#8C7CC8"/><text x="60" y="92" text-anchor="middle" font-family="monospace" font-weight="900" font-size="9" fill="#fff">NULL</text>${face(mood,58,"#3B2E73")}`; break;
+    case "campeao": b=`<ellipse cx="60" cy="114" rx="30" ry="5" fill="#000" opacity=".12"/><path d="M34 14 L44 26 L60 10 L76 26 L86 14 L84 32 H36 Z" fill="#FFC12E" stroke="#B37A00" stroke-width="2.5"/><circle cx="60" cy="10" r="4" fill="#EE4F4C"/><path d="M22 46 Q4 46 8 62 Q12 76 28 74" stroke="#D69500" stroke-width="7" fill="none"/><path d="M98 46 Q116 46 112 62 Q108 76 92 74" stroke="#D69500" stroke-width="7" fill="none"/><rect x="48" y="92" width="24" height="10" fill="#D69500"/><rect x="34" y="100" width="52" height="12" rx="4" fill="#B37A00"/><path d="M22 34 H98 V58 A38 38 0 0 1 22 58 Z" fill="#FFC12E"/><path d="M22 34 H98 V58 A38 38 0 0 1 22 58 Z" fill="none" stroke="#B37A00" stroke-width="3"/><path d="M30 40 V58" stroke="#FFF1B8" stroke-width="5" stroke-linecap="round" opacity=".8"/>${face(mood,56)}`; break;
+  }
+  return `<svg class="av ${mood} ${cls}" viewBox="0 0 120 120" aria-hidden="true"><g class="bodyg">${b}</g></svg>`;
+}
+
+/* =================== ESTADO =================== */
+const KEY="felipe1x0-v1";
+const def = ()=>({coins:0, xp:0, owned:["byte"], eq:"byte", best:{}, stars:{}, won:{}, studied:{}, gF:0, gT:0, streak:0, lastDay:null, unlockAll:false, sound:true});
+let S = def();
+try{ const raw = localStorage.getItem(KEY); if(raw) S = Object.assign(def(), JSON.parse(raw)); }catch(e){}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+let tab = "trilha";
+
+/* =================== HELPERS =================== */
+const $ = (s,el=document)=>el.querySelector(s);
+const esc = s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+function md(s){ return esc(s).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>"); }
+const KW = "int|float|double|char|void|return|if|else|for|while|do|typedef|struct|bool|true|false|break|sizeof|NULL|const|long|unsigned";
+const RE = new RegExp(`(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)|("(?:[^"\\\\\\n]|\\\\.)*"|'(?:[^'\\\\\\n]|\\\\.)*')|(#\\s*\\w+(?:\\s*<[^>\\n]*>)?)|\\b(${KW})\\b|(\\b\\d+(?:\\.\\d+)?\\b)|(___)`,"g");
+function hl(code){
+  let out="", last=0, m; RE.lastIndex=0;
+  while((m=RE.exec(code))){
+    out+=esc(code.slice(last,m.index));
+    const t=esc(m[0]);
+    out+= m[1]?`<span class="c">${t}</span>`: m[2]?`<span class="s">${t}</span>`: m[3]?`<span class="p">${t}</span>`: m[4]?`<span class="k">${t}</span>`: m[5]?`<span class="n">${t}</span>`:`<span class="blank">${m[6]?"&nbsp;?&nbsp;":t}</span>`;
+    last=m.index+m[0].length;
+  }
+  return out+esc(code.slice(last));
+}
+const shuffle = a=>{ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+const today = ()=>{ const d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); };
+function unlocked(i){ return S.unlockAll || i===0 || !!S.won[UNITS[i-1].id]; }
+function nota(){ let s=0; UNITS.forEach(u=>s+=(S.best[u.id]||0)); return Math.round(s/UNITS.length*100)/10; }
+function toast(t){ const d=document.createElement("div"); d.className="toast"; d.textContent=t; document.body.appendChild(d); setTimeout(()=>d.remove(),2500); }
+function color(u){ return `var(${u.color})`; }
+function colorD(u){ return `var(${u.color==="--coin"?"--coin-d":u.color+"-d"})`; }
+
+const IC = {
+  coin:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#D69500"/><circle cx="12" cy="11" r="9" fill="#FFC12E"/><text x="12" y="15" text-anchor="middle" font-size="10" font-weight="900" fill="#8A5A00" font-family="monospace">C</text></svg>`,
+  star:(on)=>`<svg viewBox="0 0 24 24" class="${on?'on':''}"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.5l1.3-6.6L2.5 9.3l6.6-.8z" fill="${on?'#FFC12E':'var(--line)'}" stroke="${on?'#D69500':'var(--lock-d)'}" stroke-width="1.4" stroke-linejoin="round"/></svg>`,
+  book:`<svg viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h8a3 3 0 0 1 3 3v15a2 2 0 0 0-2-2H5zM27 7h-8a3 3 0 0 0-3 3v15a2 2 0 0 1 2-2h9z"/></svg>`,
+  ball:`<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#fff"/><path d="M16 9.5l5 3.6-1.9 5.9h-6.2L11 13.1z" fill="#1A1A1A"/><path d="M16 3v6.5M21 13.1l6.5-2.3M19.1 19l4 5.5M12.9 19l-4 5.5M11 13.1l-6.5-2.3" stroke="#1A1A1A" stroke-width="2"/><circle cx="16" cy="16" r="13" fill="none" stroke="#1A1A1A" stroke-width="2"/></svg>`,
+  trophy:`<svg viewBox="0 0 32 32"><path d="M9 5h14v7a7 7 0 0 1-14 0z" fill="#fff"/><path d="M9 7H4v2a5 5 0 0 0 5 5M23 7h5v2a5 5 0 0 1-5 5" fill="none" stroke="#fff" stroke-width="2.6"/><rect x="14" y="18" width="4" height="5" fill="#fff"/><rect x="9" y="23" width="14" height="4" rx="1.5" fill="#fff"/></svg>`,
+  lock:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><rect x="7" y="14" width="18" height="13" rx="3" fill="currentColor" stroke="none"/><path d="M11 14V10a5 5 0 0 1 10 0v4"/></svg>`,
+  x:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`,
+  ok:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--grass)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>`,
+  bad:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="3.5" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>`,
+  sndOn:`<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#fff"/><path d="M17 8a5 5 0 0 1 0 8M19.5 5.5a8.5 8.5 0 0 1 0 13"/></svg>`,
+  sndOff:`<svg viewBox="0 0 24 24" fill="none" stroke="#9AAA9E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#9AAA9E"/><path d="M17 9l5 6M22 9l-5 6"/></svg>`
+};
+
+/* =================== SOM =================== */
+let AC=null;
+function tone(seq){
+  if(!S.sound) return;
+  try{
+    AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+    let t = AC.currentTime;
+    seq.forEach(([f,d,type])=>{
+      const o=AC.createOscillator(), g=AC.createGain();
+      o.type=type||"triangle"; o.frequency.value=f;
+      g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.18,t+.015); g.gain.exponentialRampToValueAtTime(.0001,t+d);
+      o.connect(g).connect(AC.destination); o.start(t); o.stop(t+d+.02); t+=d*.8;
+    });
+  }catch(e){}
+}
+const SFX = { ok:()=>tone([[659,.12],[880,.18]]), bad:()=>tone([[220,.16,"sawtooth"],[165,.22,"sawtooth"]]), win:()=>tone([[523,.14],[659,.14],[784,.14],[1047,.35]]), coin:()=>tone([[988,.08,"square"],[1319,.16,"square"]]), tap:()=>tone([[440,.04,"sine"]]) };
+
+/* =================== CONFETE =================== */
+const fx = $("#fx"), ctx = fx.getContext("2d"); let parts=[], fxRun=false;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function confetti(n=120){
+  if(reduce) return;
+  fx.width=innerWidth*devicePixelRatio; fx.height=innerHeight*devicePixelRatio;
+  const cols=["#2BA24C","#2C86E8","#FFC12E","#EE4F4C","#8A5CF0","#F2872A"];
+  for(let i=0;i<n;i++) parts.push({x:innerWidth/2+(Math.random()-.5)*120,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,r:Math.random()*6+4,c:cols[i%cols.length],a:Math.random()*6,va:(Math.random()-.5)*.4,life:0});
+  if(!fxRun){ fxRun=true; requestAnimationFrame(step); }
+}
+function step(){
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); ctx.clearRect(0,0,innerWidth,innerHeight);
+  parts.forEach(p=>{ p.vy+=.38; p.vx*=.99; p.x+=p.vx; p.y+=p.vy; p.a+=p.va; p.life++; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/3,p.r,p.r*.66); ctx.restore(); });
+  parts = parts.filter(p=>p.y<innerHeight+40 && p.life<260);
+  if(parts.length) requestAnimationFrame(step); else { fxRun=false; ctx.clearRect(0,0,innerWidth,innerHeight); }
+}
+
+/* =================== RENDER: HEADER/NAV =================== */
+function renderStats(){
+  $("#stCoins").textContent=S.coins; $("#stStreak").textContent=S.streak;
+  $("#sndBtn").innerHTML = S.sound?IC.sndOn:IC.sndOff;
+}
+$("#sndBtn").onclick=()=>{ S.sound=!S.sound; save(); renderStats(); SFX.tap(); };
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{ tab=b.dataset.tab; document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("on",x===b)); SFX.tap(); render(); scrollTo(0,0); });
+
+function render(){
+  renderStats();
+  const m=$("#main");
+  if(tab==="trilha") m.innerHTML=renderPath();
+  else if(tab==="loja") m.innerHTML=renderShop();
+  else m.innerHTML=renderResumo();
+  bindMain();
+}
+
+/* =================== TRILHA =================== */
+function renderPath(){
+  const n = nota();
+  const msg = n>=9?"Nível prova 10. O Thalissom nem viu a bola.": n>=7?"Tá jogando bem! Mais umas partidas e é goleada.": n>=4?"Meio de campeonato. Bora virar esse jogo!": n>0?"Começou bem. Cada partida vale nota.":"Jogue as partidas e veja sua nota prevista subir.";
+  let html = `<section class="hero">${avatar(S.eq, n>=7?"happy":"idle")}<div><h2>Nota prevista: <span class="nota">${n.toFixed(1)}</span></h2><p>${msg}</p><div class="meter" role="meter" aria-valuemin="0" aria-valuemax="10" aria-valuenow="${n}"><i style="width:${n*10}%"></i></div><div class="meter-l"><span>0</span><span>5</span><span>7</span><span>10</span></div></div></section>`;
+  const offs=[0,56,80,56,0,-56,-80,-56];
+  let k=0, curFound=false;
+  UNITS.forEach((u,i)=>{
+    const un=unlocked(i);
+    html+=`<div class="unit ${un?"":"locked"}" style="background:${color(u)};--ud:${colorD(u)}"><div><small>${u.final?"Grande final":"Fase "+(i+1)}</small><h3>${u.title}</h3><p>${u.sub}</p></div>${u.final?"":`<button class="ub" data-learn="${i}">Aprender</button>`}</div><div class="nodes">`;
+    const nodes = u.final ? [{kind:"play"}] : [{kind:"learn"},{kind:"play"}];
+    nodes.forEach(nd=>{
+      const off=offs[k%offs.length]; k++;
+      const done = nd.kind==="learn"? !!S.studied[u.id] : !!S.won[u.id];
+      const isCur = un && !done && !curFound; if(isCur) curFound=true;
+      const stars = nd.kind==="play" && S.stars[u.id] ? `<span class="stars">${[1,2,3].map(s=>IC.star(s<=S.stars[u.id])).join("")}</span>`:"";
+      const icon = !un? IC.lock : nd.kind==="learn"? IC.book : u.final? IC.trophy : IC.ball;
+      const label = isCur? `<span class="nlabel">${nd.kind==="learn"?"Aprender":"Jogar"}</span>`:"";
+      const walker = isCur? `<div class="walker" style="left:calc(50% + ${off}px + ${off>0?-130:62}px)">${avatar(S.eq,"idle")}</div>`:"";
+      html+=`<div class="nrow">${walker}<button class="node ${un?"":"locked"} ${isCur?"cur":""}" style="--nc:${done?"var(--coin)":color(u)};--nd:${done?"var(--coin-d)":colorD(u)};transform:translateX(${off}px)" data-${nd.kind}="${i}" aria-label="${u.title}: ${nd.kind==="learn"?"aprender":"jogar"}${un?"":" (bloqueado)"}">${label}${icon}${stars}</button></div>`;
+    });
+    html+=`</div>`;
+  });
+  html+=`<p style="text-align:center;color:var(--muted);font-size:13px;margin-top:40px">Placar da temporada: Felipe ${S.gF} × ${S.gT} Thalissom</p>`;
+  return html;
+}
+
+function bindMain(){
+  document.querySelectorAll("[data-learn]").forEach(b=>b.onclick=()=>{ const i=+b.dataset.learn; if(!unlocked(i)){ lockedMsg(i); return;} openLearn(i,false); });
+  document.querySelectorAll("[data-play]").forEach(b=>b.onclick=()=>{ const i=+b.dataset.play; if(!unlocked(i)){ lockedMsg(i); return;} startLesson(i); });
+  document.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>buy(b.dataset.buy));
+  const ua=$("#unlockAll"); if(ua) ua.onclick=()=>{ S.unlockAll=!S.unlockAll; save(); toast(S.unlockAll?"Todas as fases liberadas":"Fases voltaram a ser liberadas em ordem"); render(); };
+  const rs=$("#resetBtn"); if(rs) rs.onclick=()=>{ if(rs.dataset.armed){ S=def(); save(); toast("Progresso zerado"); render(); } else { rs.dataset.armed="1"; rs.textContent="Toque de novo para confirmar"; setTimeout(()=>{ if(rs.isConnected){ delete rs.dataset.armed; rs.textContent="Zerar progresso"; } },3000); } };
+}
+function lockedMsg(i){ SFX.bad(); toast(`Vença a fase “${UNITS[i-1].title}” para liberar.`); }
+
+/* =================== LOJA =================== */
+function renderShop(){
+  return `<div class="sec-h"><div><h2>Vestiário</h2><p>Troque moedas por novos craques.</p></div><div class="wallet">${IC.coin}${S.coins}</div></div>
+  <div class="shop">${CHARS.map(c=>{
+    const own=S.owned.includes(c.id), eq=S.eq===c.id, can=S.coins>=c.price;
+    const btn = eq?`<button class="btn ghost" disabled>Em campo</button>` : own?`<button class="btn blue" data-buy="${c.id}">Escalar</button>` : `<button class="btn gold" data-buy="${c.id}" ${can?"":"disabled"}><span class="price">${IC.coin}${c.price}</span></button>`;
+    return `<div class="card ${eq?"eq":""}">${avatar(c.id, eq?"happy":"idle", own?"":"dim")}<h3>${c.name}</h3><p>${own||can?c.desc:`Faltam ${c.price-S.coins} moedas.`}</p>${btn}</div>`;
+  }).join("")}</div>
+  <p style="color:var(--muted);font-size:13.5px;margin-top:18px">Como ganhar moedas: +5 por gol (acerto) · +10 por hat-trick (3 seguidos) · +20 por vitória · +30 se o Thalissom ficar no zero.</p>`;
+}
+function buy(id){
+  const c=CHARS.find(x=>x.id===id);
+  if(S.owned.includes(id)){ S.eq=id; save(); SFX.tap(); toast(`${c.name} entrou em campo!`); render(); return; }
+  if(S.coins<c.price) return;
+  S.coins-=c.price; S.owned.push(id); S.eq=id; save(); SFX.coin(); confetti(90); toast(`Contratado: ${c.name}!`); render();
+}
+
+/* =================== RESUMO =================== */
+function slideHTML(sl){
+  return `<div class="slide"><h2>${sl.h}</h2>${sl.p?`<p>${sl.p}</p>`:""}${sl.html||""}${sl.code?`<pre class="code">${hl(sl.code)}</pre>`:""}${sl.note?`<div class="note">${sl.note}</div>`:""}</div>`;
+}
+function renderResumo(){
+  return `<div class="sec-h"><div><h2>Resumo para a prova</h2><p>Toda a matéria numa folha só. Abra o tema e revise.</p></div></div>
+  ${UNITS.filter(u=>!u.final).map((u,i)=>`<details class="rs" ${i===0?"open":""}><summary><span class="sw" style="background:${color(u)}"></span>${u.title}<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary><div class="rs-in">${u.slides.map(slideHTML).join("")}</div></details>`).join("")}
+  <div class="tools"><button class="btn ghost" id="unlockAll">${S.unlockAll?"Voltar a liberar em ordem":"Liberar todas as fases"}</button><button class="btn ghost" id="resetBtn" style="color:var(--red)">Zerar progresso</button></div>`;
+}
+
+/* =================== TELAS (overlay) =================== */
+let screen=null;
+function openScreen(html){ closeScreen(); screen=document.createElement("div"); screen.className="screen"; screen.innerHTML=html; document.body.appendChild(screen); document.body.style.overflow="hidden"; return screen; }
+function closeScreen(){ if(screen){ screen.remove(); screen=null; document.body.style.overflow=""; document.onkeydown=null; } }
+
+/* ---- Aprender ---- */
+function openLearn(i, thenPlay){
+  const u=UNITS[i]; let s=0;
+  const sc=openScreen(`<div class="scr-head"><div class="scr-head-in"><button class="close" id="xL" aria-label="Fechar">${IC.x}</button><div class="prog"><i id="lp"></i></div></div></div><div class="scr-body"><div class="scr-body-in" id="lb"></div></div><div class="scr-foot"><div class="scr-foot-in"><div style="display:flex;gap:10px"><button class="btn ghost" id="lPrev" style="flex:1">Voltar</button><button class="btn blue" id="lNext" style="flex:2">Próximo</button></div></div></div>`);
+  const draw=()=>{
+    const sl=u.slides[s];
+    $("#lb",sc).innerHTML=`<div class="qtag" style="color:${color(u)}">${u.title} · ${s+1}/${u.slides.length}</div><div class="enter">${slideHTML(sl)}</div><div class="dots">${u.slides.map((_,j)=>`<i class="${j===s?"on":""}"></i>`).join("")}</div>`;
+    $("#lp",sc).style.width=((s+1)/u.slides.length*100)+"%";
+    $("#lPrev",sc).disabled = s===0;
+    const last = s===u.slides.length-1;
+    $("#lNext",sc).textContent = last?"Bora jogar!":"Próximo";
+    $("#lNext",sc).className = "btn "+(last?"":"blue");
+    $(".scr-body",sc).scrollTop=0;
+  };
+  $("#xL",sc).onclick=()=>{ closeScreen(); render(); };
+  $("#lPrev",sc).onclick=()=>{ if(s>0){ s--; draw(); SFX.tap(); } };
+  $("#lNext",sc).onclick=()=>{ SFX.tap(); if(s<u.slides.length-1){ s++; draw(); } else { if(!S.studied[u.id]){ S.studied[u.id]=true; S.xp+=10; save(); } startLesson(i); } };
+  document.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="Enter") $("#lNext",sc).click(); if(e.key==="ArrowLeft") $("#lPrev",sc).click(); };
+  draw();
+}
+
+/* ---- Partida ---- */
+let L=null;
+function startLesson(i){
+  const u=UNITS[i];
+  let pool = u.final ? UNITS.filter(x=>!x.final).flatMap(x=>x.qs) : u.qs;
+  const n = u.final?15:8;
+  const qs = shuffle(pool).slice(0,n).map(prep);
+  L={i, u, qs, idx:0, F:0, T:0, combo:0, coins:0, review:[], phase:"main", answered:false, sel:null, order:[], total:qs.length, done:0};
+  const sc=openScreen(`<div class="scr-head"><div class="scr-head-in"><button class="close" id="xQ" aria-label="Sair da partida">${IC.x}</button><div class="prog"><i id="qp"></i></div><div class="mini" id="mini"><span class="tn">Felipe</span><span class="digit" id="mF">0</span><span class="x">×</span><span class="digit r" id="mT">0</span><span class="tn">Thal.</span></div></div></div><div class="scr-body"><div class="scr-body-in" id="qb"></div></div><div class="scr-foot" id="qf"><div class="scr-foot-in" id="qfi"></div></div>`);
+  $("#xQ",sc).onclick=()=>{ if(L.done===0 || $("#xQ",sc).dataset.armed){ closeScreen(); L=null; render(); } else { $("#xQ",sc).dataset.armed=1; toast("Toque no X de novo para abandonar a partida"); setTimeout(()=>{ const x=$("#xQ"); if(x) delete x.dataset.armed; },2500);} };
+  document.onkeydown=keys;
+  drawQ();
+}
+function prep(q){
+  const o={...q};
+  if(q.t==="mc"||q.t==="fill"){ o.order=shuffle(q.opts.map((t,j)=>({t,ok:j===0}))); }
+  if(q.t==="order"){ o.bank=shuffle([...q.ans,...(q.extra||[])].map((t,j)=>({t,id:j}))); }
+  return o;
+}
+const TAG={mc:"Escolha a resposta", fill:"Complete o código", tf:"Verdadeiro ou falso?", type:"Digite a resposta", order:"Monte o código"};
+const CHEER=["GOOOL do Felipe!","Que golaço!","No ângulo!","Chapéu no goleiro!","Bola na rede!","Craque demais!"];
+const OOPS=["Gol do Thalissom…","Bola fora!","Quase! Bora virar.","Impedimento!"];
+const PEP=["Bora, Felipe!","Essa cai na prova.","Pensa com calma.","Lê o código linha por linha.","Você consegue!","Olho no índice!"];
+
+function curQ(){ return L.phase==="main"? L.qs[L.idx] : L.review[0]; }
+function drawQ(){
+  const q=curQ(); L.answered=false; L.sel=null; L.order=[];
+  const isOpt = q.t==="mc"||q.t==="fill";
+  const codeLike = isOpt && (q.t==="fill" || q.co || q.code_opts);
+  let body = `<div class="qtag">${L.phase==="review"?"Revisão dos erros · ":""}${TAG[q.t]}</div><div class="qrow">${avatar(S.eq,"idle")}<div class="bubble">${md(q.q)}</div></div>`;
+  if(q.code) body+=`<pre class="code">${hl(q.code)}</pre>`;
+  if(isOpt) body+=`<div class="opts">${q.order.map((o,j)=>`<button class="opt" data-o="${j}"><span class="kbd">${j+1}</span><span class="t">${codeLike?`<code>${esc(o.t)}</code>`:esc(o.t)}</span></button>`).join("")}</div>`;
+  if(q.t==="tf") body+=`<div class="opts two"><button class="opt tf" data-o="1"><span class="kbd">1</span>Verdadeiro</button><button class="opt tf" data-o="0"><span class="kbd">2</span>Falso</button></div>`;
+  if(q.t==="type") body+=`<input class="typein" id="ti" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Digite aqui…" aria-label="Sua resposta"><div class="hint">Escreva exatamente o que aparece na tela.</div>`;
+  if(q.t==="order") body+=`<div class="ansline ${q.lines?"lines":""}" id="al"></div><div class="bank ${q.lines?"lines":""}" id="bk">${q.bank.map(b=>`<button class="tok ${q.lines?"lns":""}" data-b="${b.id}">${esc(b.t)}</button>`).join("")}</div>`;
+  $("#qb").innerHTML=`<div class="enter">${body}</div>`;
+  $(".scr-body").scrollTop=0;
+  const prog = L.phase==="main"? L.idx/L.total : 1;
+  $("#qp").style.width=(prog*100)+"%";
+  setFoot("idle");
+  // bind
+  document.querySelectorAll("#qb .opt").forEach(b=>b.onclick=()=>{ if(L.answered) return; document.querySelectorAll("#qb .opt").forEach(x=>x.classList.remove("sel")); b.classList.add("sel"); L.sel=+b.dataset.o; SFX.tap(); setFoot("ready"); });
+  const ti=$("#ti"); if(ti){ ti.oninput=()=>{ L.sel=ti.value; setFoot(ti.value.trim()?"ready":"idle"); }; setTimeout(()=>ti.focus(),60); }
+  if(q.t==="order"){
+    const redraw=()=>{
+      $("#al").innerHTML=L.order.map(id=>`<button class="tok ${q.lines?"lns":""}" data-r="${id}">${esc(q.bank.find(b=>b.id===id).t)}</button>`).join("");
+      document.querySelectorAll("#bk .tok").forEach(t=>t.classList.toggle("used",L.order.includes(+t.dataset.b)));
+      document.querySelectorAll("#al .tok").forEach(t=>t.onclick=()=>{ if(L.answered) return; L.order=L.order.filter(x=>x!==+t.dataset.r); SFX.tap(); redraw(); });
+      setFoot(L.order.length?"ready":"idle");
+    };
+    document.querySelectorAll("#bk .tok").forEach(t=>t.onclick=()=>{ if(L.answered||L.order.includes(+t.dataset.b)) return; L.order.push(+t.dataset.b); SFX.tap(); redraw(); });
+  }
+}
+function setFoot(state, info){
+  const f=$("#qf"), fi=$("#qfi"); f.className="scr-foot";
+  if(state==="idle"||state==="ready"){
+    fi.innerHTML=`<button class="btn wide" id="chk" ${state==="idle"?"disabled":""}>Verificar</button>`;
+    $("#chk").onclick=check;
+  } else {
+    f.classList.add(state);
+    fi.innerHTML=`<div class="fb-title"><span class="ic">${state==="ok"?IC.ok:IC.bad}</span>${info.title}</div>${info.exp?`<p class="fb-exp">${info.exp}</p>`:""}<button class="btn wide" id="nxt">Continuar</button>`;
+    $("#nxt").onclick=next; setTimeout(()=>{ const n=$("#nxt"); if(n) n.focus({preventScroll:true}); },50);
+  }
+}
+function norm(s){ return String(s).trim().replace(/\s+/g," ").toLowerCase(); }
+function numEq(a,b){ const x=parseFloat(String(a).replace(",",".")), y=parseFloat(String(b).replace(",",".")); return !isNaN(x)&&!isNaN(y)&&/^-?[\d.,]+$/.test(String(a).trim())&&Math.abs(x-y)<1e-9; }
+function check(){
+  if(L.answered) return;
+  const q=curQ(); let ok=false, right="";
+  if(q.t==="mc"||q.t==="fill"){ if(L.sel==null) return; ok=q.order[L.sel].ok; right=q.opts[0];
+    document.querySelectorAll("#qb .opt").forEach((b,j)=>{ b.disabled=true; if(q.order[j].ok) b.classList.add("right"); else if(j===L.sel) b.classList.add("wrong"); }); }
+  if(q.t==="tf"){ if(L.sel==null) return; ok=(L.sel===1)===q.a; right=q.a?"Verdadeiro":"Falso";
+    document.querySelectorAll("#qb .opt").forEach(b=>{ b.disabled=true; const v=+b.dataset.o===1; if(v===q.a) b.classList.add("right"); else if(+b.dataset.o===L.sel) b.classList.add("wrong"); }); }
+  if(q.t==="type"){ const v=$("#ti").value; if(!v.trim()) return; const alts=[].concat(q.a); ok=alts.some(a=>norm(a)===norm(v)||numEq(v,a)); right=alts[0]; $("#ti").classList.add(ok?"right":"wrong"); $("#ti").readOnly=true; }
+  if(q.t==="order"){ if(!L.order.length) return; const got=L.order.map(id=>q.bank.find(b=>b.id===id).t); const tgts=[q.ans,...(q.alt||[])]; ok=tgts.some(t=>t.length===got.length&&t.every((x,j)=>x===got[j])); right=q.ans.join(q.lines?"\n":" "); }
+  L.answered=true;
+  const mascot=$("#qb .av"); if(mascot){ mascot.outerHTML=avatar(S.eq, ok?"happy":"sad"); }
+  let title, exp = md(q.exp||"");
+  if(!ok && (q.t==="type"||q.t==="order")) exp = `Resposta: <code>${esc(right).replace(/\n/g,"<br>")}</code><br>`+exp;
+  else if(ok && q.t==="type" && norm([].concat(q.a)[0])!==norm($("#ti").value)) exp = `Saída exata: <code>${esc([].concat(q.a)[0])}</code><br>`+exp;
+  if(L.phase==="main"){
+    L.done++;
+    if(ok){ L.F++; L.combo++; L.coins+=5; S.gF++; title=CHEER[Math.floor(Math.random()*CHEER.length)]; goal("F");
+      if(L.combo===3){ L.coins+=10; setTimeout(()=>bigText("Hat-trick! +10"),500); } }
+    else { L.T++; L.combo=0; S.gT++; L.review.push(q); title=OOPS[Math.floor(Math.random()*OOPS.length)]; goal("T"); }
+  } else {
+    title = ok?"Agora foi!":"Ainda não. Ela volta já já.";
+    if(ok){ SFX.ok(); L.review.shift(); } else { SFX.bad(); L.review.push(L.review.shift()); }
+  }
+  save();
+  setFoot(ok?"ok":"bad",{title, exp});
+}
+function goal(who){
+  const mini=$("#mini"); $("#mF").textContent=L.F; $("#mT").textContent=L.T;
+  mini.classList.remove("flash-g","flash-r"); void mini.offsetWidth; mini.classList.add(who==="F"?"flash-g":"flash-r");
+  if(who==="F"){ SFX.ok(); const r=$("#mF").getBoundingClientRect(); const c=document.createElement("div"); c.className="floatcoin"; c.textContent="+5"; c.style.left=(r.left)+"px"; c.style.top=(r.bottom+4)+"px"; document.body.appendChild(c); setTimeout(()=>c.remove(),1000); }
+  else SFX.bad();
+}
+function bigText(t,red){ const d=document.createElement("div"); d.className="combo"+(red?" r":""); d.textContent=t; document.body.appendChild(d); SFX.coin(); confetti(40); setTimeout(()=>d.remove(),1300); }
+function next(){
+  if(L.phase==="main"){
+    L.idx++;
+    if(L.idx<L.qs.length) return drawQ();
+    if(L.review.length){ L.phase="review"; return interstitial(); }
+    return finish();
+  } else {
+    if(L.review.length) return drawQ();
+    return finish();
+  }
+}
+function interstitial(){
+  $("#qp").style.width="100%";
+  $("#qb").innerHTML=`<div class="res enter">${avatar(S.eq,"idle")}<h2>Fim do tempo normal</h2><div class="bigboard"><div class="side"><span class="digit">${L.F}</span><span class="tn">Felipe</span></div><span class="x" style="font-size:28px">×</span><div class="side"><span class="digit r">${L.T}</span><span class="tn">Thalissom</span></div></div><p style="max-width:40ch;color:var(--muted)">Antes do apito final, vamos revisar as ${L.review.length} questões que você errou. A revisão não muda o placar, mas fixa o conteúdo.</p></div>`;
+  const fi=$("#qfi"); $("#qf").className="scr-foot";
+  fi.innerHTML=`<button class="btn wide blue" id="nxt">Revisar erros</button>`; $("#nxt").onclick=()=>drawQ();
+}
+function finish(){
+  const u=L.u, acc=L.F/L.total, win=L.F>L.T;
+  let bonus=0; if(win) bonus+=20; if(L.T===0) bonus+=30;
+  const earned=L.coins+bonus; S.coins+=earned; S.xp+=L.F*10;
+  const st = acc>=.9?3: acc>=.7?2: win?1:0;
+  if(st>(S.stars[u.id]||0)) S.stars[u.id]=st;
+  if(acc>(S.best[u.id]||0)) S.best[u.id]=acc;
+  const firstWin = win && !S.won[u.id];
+  if(win) S.won[u.id]=true;
+  const t=today(); if(S.lastDay!==t){ const y=new Date(); y.setDate(y.getDate()-1); const ys=y.getFullYear()+"-"+(y.getMonth()+1)+"-"+y.getDate(); S.streak = S.lastDay===ys? S.streak+1 : 1; S.lastDay=t; }
+  save(); renderStats();
+  const title = !win? (L.F===L.T?"Empate! Bora pra revanche.":"O Thalissom venceu essa…") : L.T===0? (u.final?"CAMPEÃO! Thalissom no zero!":"De lavada! Thalissom no zero.") : u.final?"Campeão do campeonato!":"Vitória do Felipe!";
+  const sub = !win? "Revise o resumo da fase e tente de novo. A revisão dos erros já te deixou mais forte." : firstWin && L.i<UNITS.length-1 && !u.final? `Fase “${UNITS[L.i+1].title}” liberada.` : u.final? "Você está pronto para a prova." : "Partida registrada no seu histórico.";
+  $("#qp").style.width="100%";
+  $("#qb").innerHTML=`<div class="res enter">${avatar(S.eq, win?"party":"sad")}<h2>${title}</h2>
+   <div class="bigboard"><div class="side"><span class="digit">${L.F}</span><span class="tn">Felipe</span></div><span class="x" style="font-size:28px">×</span><div class="side"><span class="digit r">${L.T}</span><span class="tn">Thalissom</span></div></div>
+   <div class="rstars">${[1,2,3].map(s=>IC.star(s<=st).replace('class="on"',`class="on" style="animation-delay:${s*.18}s"`)).join("")}</div>
+   <p style="color:var(--muted);margin:0;max-width:42ch">${sub}</p>
+   <div class="rgrid"><div class="rbox"><small>Moedas</small><b style="color:var(--coin-d)">+${earned}</b></div><div class="rbox"><small>Acerto</small><b>${Math.round(acc*100)}%</b></div><div class="rbox"><small>Nota prevista</small><b style="color:var(--grass)">${nota().toFixed(1)}</b></div></div></div>`;
+  $("#qf").className="scr-foot";
+  $("#qfi").innerHTML=`<div style="display:flex;gap:10px"><button class="btn ghost" id="again" style="flex:1">Jogar de novo</button><button class="btn" id="cont" style="flex:2">Continuar</button></div>`;
+  $("#again").onclick=()=>startLesson(L.i);
+  $("#cont").onclick=()=>{ closeScreen(); L=null; tab="trilha"; render(); };
+  if(win){ SFX.win(); confetti(u.final?220:140); } else SFX.bad();
+}
+function keys(e){
+  if(!L || !screen) return;
+  if(e.target && e.target.id==="ti"){ if(e.key==="Enter"){ e.preventDefault(); const b=$("#chk")||$("#nxt"); if(b) b.click(); } return; }
+  const n=parseInt(e.key,10);
+  if(!L.answered && n>=1){ const bs=document.querySelectorAll("#qb .opt"); if(bs[n-1]) bs[n-1].click(); }
+  if(e.key==="Enter"){ e.preventDefault(); const b=$("#chk:not([disabled])")||$("#nxt")||$("#cont"); if(b) b.click(); }
+}
+
+render();
+</script>
+
+</body>
+</html>
